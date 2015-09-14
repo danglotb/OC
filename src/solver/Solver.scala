@@ -1,21 +1,37 @@
 package solver
 
 import data.InstanceReader
+import data.Instance
 import scala.collection.mutable.ListBuffer
 
 /**
  * @author danglot
  */
-abstract class Solver(nbJobs : Int, reader : InstanceReader) {
+abstract class Solver(nbJobs: Int, reader: InstanceReader) {
+
+  var solution: ListBuffer[Int] = ListBuffer[Int]()
   
-  var solution : ListBuffer[Int] = ListBuffer[Int]()
-  
+  var instance: Instance = _
+
+  for (i <- 0 until nbJobs)
+    solution += i
+
   var score : Int = 0
-  
-  def run() : Unit
-  
-  override def toString() : String = {
-    return this.reader.nbRead+" : "+this.score;
+
+  def run(): Unit
+
+  def computeScore() : Unit = {
+    var currentTime : Int = 0
+    for (i <- 0 until nbJobs) {
+      currentTime += instance.processingTimes(this.solution(i));
+      val time = Math.max((currentTime - instance.dueDates(this.solution(i))), 0);
+      this.score += instance.weights(this.solution(i)) * time;
+    }
+    println(this)
+  }
+
+  override def toString(): String = {
+    return this.reader.nbRead + " : " + this.score;
   }
 
 }
