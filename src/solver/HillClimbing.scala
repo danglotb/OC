@@ -1,57 +1,72 @@
 package solver
 
 import scala.collection.mutable.ListBuffer
+import data._
+import solver._
 
 /**
  * @author danglot
  */
 
 object HillClimbingOption {
-  
+
   type Options = Map[String, Any]
-  
-  def options(opt : Options, args : List[String]) : Options = {
-    
+
+  def options(opt: Options, args: List[String]): Options = {
+
     args match {
-      case "-select" :: selection :: tail => options( opt++Map("select" -> selection), tail)
-      case "-nb" :: nb :: tail => options( opt++Map("nb" -> nb), tail)
-      case "-init" :: init :: tail => options(opt++Map("init" -> init), tail)
-      case _ => usage(opt)
+      case "-select" :: selection :: tail => options(opt ++ Map("select" -> selection), tail)
+      case "-nb" :: nb :: tail            => options(opt ++ Map("nb" -> nb), tail)
+      case "-init" :: init :: tail        => options(opt ++ Map("init" -> init), tail)
+      case _                              => usage(opt)
     }
   }
-  
-  def usage(opt : Options) : Options = {
+
+  def usage(opt: Options): Options = {
     opt
   }
-  
+
 }
 
+object HillClimbing {
 
-class HillClimbing(options : Map[String, Any]) {
-  
-  var currentSolution : ListBuffer[Int] = _
-  
-  var voisinFunc : ListBuffer[Int] => _  = _
-  
-  var initFunc : () => ListBuffer[Int] = _
-  
-  initFunc = randomInit
-  
-  def run() : Unit = {
-    //initSol
-    currentSolution = initFunc()
-    
-    
-    //GenNei
-    //Select
-    
-  }
-  
-  def randomInit() : ListBuffer[Int] = {
-    
-    
+  def run(currentSolution: Solution, nbRun: Int,
+          gen: (Solution, (Int, Int)) => ListBuffer[Int],
+          select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution) : Unit = {
+    if (nbRun == -1) 
+      return
+    println("nbRun : "+ nbRun+" Score : "+ currentSolution.score)
+    run(select(gen, currentSolution, (0, 0)), nbRun - 1, gen, select)
   }
 
-  
-  
+  def insertGen(current: Solution, index: (Int, Int)): ListBuffer[Int] = {
+    val ret = current.solution().clone
+    ret.remove(index._1)
+    ret.remove(index._2)
+    ret.insert((current.solution())(index._1), index._2)
+    ret.insert((current.solution())(index._2), index._1)
+    return ret
+  }
+
+  def selectFirst(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
+                  currentSolution: Solution,
+                  index: (Int, Int)): Solution = {
+    var i = 0
+    var j = 0
+    var neigbhor = currentSolution
+    while (neigbhor.score() >= currentSolution.score()){
+        neigbhor = new Solution(currentSolution.instance(), genfunc(currentSolution, (i,j)))
+        i += 1
+        j += 1
+    }
+    neigbhor
+  }
+
+  def initRandom(): Solution = {
+    val reader = new InstanceReader(100, "input/wt100.txt", 125)
+    val solver: RandomSolver = new RandomSolver(100, reader)
+    solver.run()
+    return new Solution(solver.instance, solver.solution)
+  }
+
 }

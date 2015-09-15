@@ -11,6 +11,8 @@ class Instance(nbJobs : Int) {
   
   val dueDates = Array.ofDim[Int](nbJobs)
   
+  def nbJobs() : Int = nbJobs
+  
   override def toString() : String = {
     var ret : String = "nb jobs : "+nbJobs+"\n"
     for (i <- 0 until this.nbJobs) 
