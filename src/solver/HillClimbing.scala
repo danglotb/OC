@@ -42,28 +42,32 @@ object HillClimbingOptions {
 }
 
 object HillClimbing {
-  
-  var solver : Solver = _
-  
-  var reader : InstanceReader = _
-  
-  var score : Int = 0
-  
-  def report() : String = return "score : "+score
-  
+
+  var solver: Solver = _
+
+  var reader: InstanceReader = _
+
+  var score: Int = 0
+
+  var i: Int = 0
+
+  var j: Int = 1
+
+  def report(): String = return "score : " + score
+
   def runAllInstances(gen: (Solution, (Int, Int)) => ListBuffer[Int],
-          select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution) : Unit = {
-    while(reader.hasNext()) {
+                      select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution): Unit = {
+    while (reader.hasNext()) {
       run(genFirstSolution, gen, select)
     }
   }
-  
+
   def run(currentSolution: Solution,
           gen: (Solution, (Int, Int)) => ListBuffer[Int],
           select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution): Unit = {
-    val selected = select(gen, currentSolution, (0, 1))
+    val selected = select(gen, currentSolution, (i, j))
     if (selected == currentSolution) {
-      print(currentSolution.score()+"\t")
+      print(currentSolution.score() + "\t")
       return
     }
     score = selected.score()
@@ -111,6 +115,19 @@ object HillClimbing {
     }
   }
 
+  def newSelectFirst(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
+                     currentSolution: Solution,
+                     index: (Int, Int), startIndex: Int): (Solution, (Int, Int)) = {
+    if (index._1 == startIndex)
+      return (currentSolution, (index._1, index._2))
+    val neighbor = new Solution(currentSolution.instance(), genfunc(currentSolution, (index._1, index._2)))
+    if (neighbor.score < currentSolution.score)
+      return (neighbor, (index._1, index._2))
+    else
+      return newSelectFirst(genfunc, currentSolution, 
+          (index._1, (index._2 + 1) % currentSolution.instance().nbJobs()), startIndex)
+  }
+
   def selectBest(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
                  currentSolution: Solution,
                  index: (Int, Int)): Solution = {
@@ -119,23 +136,23 @@ object HillClimbing {
   }
 
   //Init the first solution
-  
-  def initRandom(pathname: String) : Unit = {
+
+  def initRandom(pathname: String): Unit = {
     reader = new InstanceReader(100, pathname, 125)
     solver = new RandomSolver(100, reader)
   }
 
-  def initEdd(pathname: String) : Unit = {
+  def initEdd(pathname: String): Unit = {
     reader = new InstanceReader(100, pathname, 125)
     solver = new EddSolver(100, reader)
   }
 
-  def initMdd(pathname: String) : Unit = {
+  def initMdd(pathname: String): Unit = {
     reader = new InstanceReader(100, pathname, 125)
     solver = new MddSolver(100, reader)
   }
-  
-  def genFirstSolution() : Solution = {
+
+  def genFirstSolution(): Solution = {
     solver.run()
     return new Solution(solver.instance, solver.solution)
   }
