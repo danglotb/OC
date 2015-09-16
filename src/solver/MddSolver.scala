@@ -27,7 +27,7 @@ class MddSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, read
     
     currentTime = 0
     
-    println(this)
+//    println(this)
   }
 
   override def computeScore(): Unit = {
