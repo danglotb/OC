@@ -8,7 +8,7 @@ import scala.collection.mutable.ListBuffer
  * @author danglot
  */
 abstract class Solver(nbJobs: Int, reader: InstanceReader) {
-
+  
   var solution: ListBuffer[Int] = ListBuffer[Int]()
   
   var instance: Instance = _
@@ -27,7 +27,6 @@ abstract class Solver(nbJobs: Int, reader: InstanceReader) {
       val time = Math.max((currentTime - instance.dueDates(this.solution(i))), 0);
       this.score += instance.weights(this.solution(i)) * time;
     }
-    println(this)
   }
 
   override def toString(): String = {

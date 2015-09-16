@@ -11,9 +11,9 @@ class Solution(instance : Instance, solution : ListBuffer[Int]) {
     var score = 0
     var currentTime : Int = 0
     for (i <- 0 until instance.nbJobs) {
-      currentTime += instance.processingTimes(this.solution(i));
-      val time = Math.max((currentTime - instance.dueDates(this.solution(i))), 0);
-      score += instance.weights(this.solution(i)) * time;
+      currentTime += instance.processingTimes(this.solution(i))
+      val time = Math.max((currentTime - instance.dueDates(this.solution(i))), 0)
+      score += instance.weights(this.solution(i)) * time
     }
     score
   }

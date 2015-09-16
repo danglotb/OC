@@ -39,12 +39,11 @@ object HillClimbing {
     run(select(gen, currentSolution, (0, 0)), nbRun - 1, gen, select)
   }
 
-  def insertGen(current: Solution, index: (Int, Int)): ListBuffer[Int] = {
+  def swapGen(current: Solution, index: (Int, Int)): ListBuffer[Int] = {
     val ret = current.solution().clone
-    ret.remove(index._1)
-    ret.remove(index._2)
-    ret.insert((current.solution())(index._1), index._2)
-    ret.insert((current.solution())(index._2), index._1)
+    ret -= ((current.solution())(index._1), (current.solution())(index._2))
+    ret.insert(index._2, (current.solution())(index._1))
+    ret.insert(index._1, (current.solution())(index._2))
     return ret
   }
 
@@ -52,7 +51,7 @@ object HillClimbing {
                   currentSolution: Solution,
                   index: (Int, Int)): Solution = {
     var i = 0
-    var j = 0
+    var j = 1
     var neigbhor = currentSolution
     while (neigbhor.score() >= currentSolution.score()){
         neigbhor = new Solution(currentSolution.instance(), genfunc(currentSolution, (i,j)))
