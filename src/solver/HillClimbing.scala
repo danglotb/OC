@@ -3,40 +3,70 @@ package solver
 import scala.collection.mutable.ListBuffer
 import data._
 import solver._
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
  * @author danglot
  */
 
-object HillClimbingOption {
+object HillClimbingOptions {
 
   type Options = Map[String, Any]
 
   def options(opt: Options, args: List[String]): Options = {
-
-    args match {
-      case "-select" :: selection :: tail => options(opt ++ Map("select" -> selection), tail)
-      case "-nb" :: nb :: tail            => options(opt ++ Map("nb" -> nb), tail)
-      case "-init" :: init :: tail        => options(opt ++ Map("init" -> init), tail)
-      case _                              => usage(opt)
+    if (args.isEmpty)
+      opt
+    else {
+      args match {
+        case "-select" :: selection :: tail  => options(opt ++ Map("select" -> selection), tail)
+        case "-neighbor" :: neighbor :: tail => options(opt ++ Map("neighbor" -> neighbor), tail)
+        case "-init" :: init :: tail         => options(opt ++ Map("init" -> init), tail)
+        case "-k" :: k :: tail               => options(opt ++ Map("k" -> k), tail)
+        case "-file" :: file :: tail         => options(opt ++ Map("file" -> file), tail)
+        case _                               => usage(opt)
+      }
     }
   }
 
   def usage(opt: Options): Options = {
+    print("Options availaibles : \n")
+    print("\t -select [first,best] to choose the selection mode\n")
+    print("\t -neighbor [insert,swap,exchange] to choose the generation of neighbors\n")
+    print("\t -init [rnd,edd,mdd] to choose the how the first solution is generates\n")
+    print("\t -file <pathname> to specify the path to the file used\n")
+    print("\t -k <Int> to choose how many run the apps will do (30 if no specified).\n")
+    System.exit(1)
     opt
   }
 
 }
 
 object HillClimbing {
-
-  def run(currentSolution: Solution, nbRun: Int,
+  
+  var score : Int = 0
+  
+  def report() : String = return "score : "+score
+  
+  def run(currentSolution: Solution,
           gen: (Solution, (Int, Int)) => ListBuffer[Int],
           select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution): Unit = {
-    if (nbRun == -1)
+    val selected = select(gen, currentSolution, (0, 1))
+    if (selected == currentSolution)
       return
-    println("nbRun : " + nbRun + " Score : " + currentSolution.score)
-    run(select(gen, currentSolution, (0, 1)), nbRun - 1, gen, select)
+    score = selected.score()
+    run(selected, gen, select)
+  }
+
+  //Generate neighbors
+
+  def exchangeGen(current: Solution, index: (Int, Int)): ListBuffer[Int] = {
+    throw new NotImplementedException()
+    return current.solution()
+  }
+
+  def insertGen(current: Solution, index: (Int, Int)): ListBuffer[Int] = {
+    throw new NotImplementedException()
+    return current.solution()
   }
 
   def swapGen(current: Solution, index: (Int, Int)): ListBuffer[Int] = {
@@ -47,38 +77,52 @@ object HillClimbing {
     return ret
   }
 
+  //Select the right neighbor
+
   def selectFirst(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
                   currentSolution: Solution,
                   index: (Int, Int)): Solution = {
     if (index._1 == index._2)
-      return selectFirst(genfunc, currentSolution, (index._1, index._2 + 1))
-    else if (index._2 == currentSolution.instance().nbJobs()-1)
+      if (index._1 == currentSolution.instance().nbJobs() - 1)
+        return currentSolution
+      else
+        return selectFirst(genfunc, currentSolution, (index._1, index._2 + 1))
+    else if (index._2 == currentSolution.instance().nbJobs() - 1)
       return selectFirst(genfunc, currentSolution, (index._1 + 1, 0))
     else {
-      val voisin = new Solution(currentSolution.instance(), genfunc(currentSolution, (index._1, index._2)))
-      if (voisin.score < currentSolution.score)
-        return voisin
+      val neighbor = new Solution(currentSolution.instance(), genfunc(currentSolution, (index._1, index._2)))
+      if (neighbor.score < currentSolution.score)
+        return neighbor
       else
         return selectFirst(genfunc, currentSolution, (index._1, index._2 + 1))
     }
   }
 
-  def initRandom(): Solution = {
-    val reader = new InstanceReader(100, "input/wt100.txt", 125)
+  def selectBest(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
+                 currentSolution: Solution,
+                 index: (Int, Int)): Solution = {
+    throw new NotImplementedException()
+    return new Solution(currentSolution.instance(), currentSolution.solution())
+  }
+
+  //Init the first solution
+  
+  def initRandom(pathname: String): Solution = {
+    val reader = new InstanceReader(100, pathname, 125)
     val solver: Solver = new RandomSolver(100, reader)
     solver.run()
     return new Solution(solver.instance, solver.solution)
   }
-  
-  def initEdd() : Solution = {
-    val reader = new InstanceReader(100, "input/wt100.txt", 125)
+
+  def initEdd(pathname: String): Solution = {
+    val reader = new InstanceReader(100, pathname, 125)
     val solver: Solver = new EddSolver(100, reader)
     solver.run()
     return new Solution(solver.instance, solver.solution)
   }
-  
-  def initMdd() : Solution = {
-    val reader = new InstanceReader(100, "input/wt100.txt", 125)
+
+  def initMdd(pathname: String): Solution = {
+    val reader = new InstanceReader(100, pathname, 125)
     val solver: Solver = new MddSolver(100, reader)
     solver.run()
     return new Solution(solver.instance, solver.solution)
