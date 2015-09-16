@@ -43,16 +43,29 @@ object HillClimbingOptions {
 
 object HillClimbing {
   
+  var solver : Solver = _
+  
+  var reader : InstanceReader = _
+  
   var score : Int = 0
   
   def report() : String = return "score : "+score
+  
+  def runAllInstances(gen: (Solution, (Int, Int)) => ListBuffer[Int],
+          select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution) : Unit = {
+    while(reader.hasNext()) {
+      run(genFirstSolution, gen, select)
+    }
+  }
   
   def run(currentSolution: Solution,
           gen: (Solution, (Int, Int)) => ListBuffer[Int],
           select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution): Unit = {
     val selected = select(gen, currentSolution, (0, 1))
-    if (selected == currentSolution)
+    if (selected == currentSolution) {
+      print(currentSolution.score()+"\t")
       return
+    }
     score = selected.score()
     run(selected, gen, select)
   }
@@ -107,23 +120,22 @@ object HillClimbing {
 
   //Init the first solution
   
-  def initRandom(pathname: String): Solution = {
-    val reader = new InstanceReader(100, pathname, 125)
-    val solver: Solver = new RandomSolver(100, reader)
-    solver.run()
-    return new Solution(solver.instance, solver.solution)
+  def initRandom(pathname: String) : Unit = {
+    reader = new InstanceReader(100, pathname, 125)
+    solver = new RandomSolver(100, reader)
   }
 
-  def initEdd(pathname: String): Solution = {
-    val reader = new InstanceReader(100, pathname, 125)
-    val solver: Solver = new EddSolver(100, reader)
-    solver.run()
-    return new Solution(solver.instance, solver.solution)
+  def initEdd(pathname: String) : Unit = {
+    reader = new InstanceReader(100, pathname, 125)
+    solver = new EddSolver(100, reader)
   }
 
-  def initMdd(pathname: String): Solution = {
-    val reader = new InstanceReader(100, pathname, 125)
-    val solver: Solver = new MddSolver(100, reader)
+  def initMdd(pathname: String) : Unit = {
+    reader = new InstanceReader(100, pathname, 125)
+    solver = new MddSolver(100, reader)
+  }
+  
+  def genFirstSolution() : Solution = {
     solver.run()
     return new Solution(solver.instance, solver.solution)
   }

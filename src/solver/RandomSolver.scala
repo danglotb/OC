@@ -11,6 +11,5 @@ class RandomSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, r
   override def run(): Unit = {
     this.instance = reader.getInstance()
     solution = scala.util.Random.shuffle(solution)
-    computeScore()
   }
 }

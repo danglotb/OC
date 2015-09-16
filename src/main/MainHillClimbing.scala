@@ -9,7 +9,7 @@ object MainHillClimbing extends App {
   val options = HillClimbingOptions.options(Map(), args.toList)
 
   var selectFunc: ((((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution) = _
-  var initFunc: (String) => Solution = _
+  var initFunc : (String) => Unit = _
   var genFunc: (Solution, (Int, Int)) => ListBuffer[Int] = _
   var nbRuns: Int = 30
   var pathname: String = ""
@@ -53,11 +53,15 @@ object MainHillClimbing extends App {
     case _          => HillClimbingOptions.usage(options)
   }
 
-  for (i <- 0 until nbRuns) {
-    val time : Long = System.currentTimeMillis()
-    HillClimbing.run(initFunc(pathname), genFunc, selectFunc)
-    println(i+":"+ (System.currentTimeMillis()-time) + " ms")
-//    println(HillClimbing.report)
-  }
+//  initFunc(pathname)
+//  HillClimbing.runAllInstances(genFunc, selectFunc)
+  
+  
+//  for (i <- 0 until nbRuns) {
+//    val time : Long = System.currentTimeMillis()
+    initFunc(pathname)
+    HillClimbing.run(HillClimbing.genFirstSolution, genFunc, selectFunc)
+//    println(i+":"+ (System.currentTimeMillis()-time) + " ms")
+//  }
 }
 
