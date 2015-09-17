@@ -8,7 +8,7 @@ object MainHillClimbing extends App {
 
   val options = HillClimbingOptions.options(Map(), args.toList)
 
-  var selectFunc: ((((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution) = _
+  var selectFunc: ((((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => (Solution, (Int,Int)) ) = _
   var initFunc : (String) => Unit = _
   var genFunc: (Solution, (Int, Int)) => ListBuffer[Int] = _
   var nbRuns: Int = 30
@@ -16,8 +16,8 @@ object MainHillClimbing extends App {
 
   options.get("select") match {
     case Some(strSelect) => strSelect match {
-      case "first" => selectFunc = HillClimbing.selectFirst
-      case "best"  => selectFunc = HillClimbing.selectBest
+      case "first" => selectFunc = HillClimbing.newSelectFirst
+//      case "best"  => selectFunc = HillClimbing.selectBest
       case _       => HillClimbingOptions.usage(options)
     }
     case _ => HillClimbingOptions.usage(options)

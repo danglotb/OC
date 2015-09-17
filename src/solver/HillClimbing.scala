@@ -56,7 +56,7 @@ object HillClimbing {
   def report(): String = return "score : " + score
 
   def runAllInstances(gen: (Solution, (Int, Int)) => ListBuffer[Int],
-                      select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution): Unit = {
+                      select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => (Solution, (Int, Int)) ): Unit = {
     while (reader.hasNext()) {
       run(genFirstSolution, gen, select)
     }
@@ -64,14 +64,16 @@ object HillClimbing {
 
   def run(currentSolution: Solution,
           gen: (Solution, (Int, Int)) => ListBuffer[Int],
-          select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => Solution): Unit = {
+          select: (((Solution, (Int, Int)) => ListBuffer[Int]), Solution, (Int, Int)) => (Solution, (Int, Int)) ): Unit = {
     val selected = select(gen, currentSolution, (i, j))
-    if (selected == currentSolution) {
+    if (selected._1 == currentSolution) {
       print(currentSolution.score() + "\t")
       return
     }
-    score = selected.score()
-    run(selected, gen, select)
+    i = selected._2._1
+    j = selected._2._2
+    score = selected._1.score()
+    run(selected._1, gen, select)
   }
 
   //Generate neighbors
@@ -117,15 +119,37 @@ object HillClimbing {
 
   def newSelectFirst(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
                      currentSolution: Solution,
-                     index: (Int, Int), startIndex: Int): (Solution, (Int, Int)) = {
-    if (index._1 == startIndex)
-      return (currentSolution, (index._1, index._2))
-    val neighbor = new Solution(currentSolution.instance(), genfunc(currentSolution, (index._1, index._2)))
+                     startIndex: (Int, Int)): (Solution, (Int, Int)) = {
+    
+    var i : Int = startIndex._1
+    var j : Int = startIndex._2
+    
+    var neighbor = new Solution(currentSolution.instance(), genfunc(currentSolution, (i, j)))
+    
     if (neighbor.score < currentSolution.score)
-      return (neighbor, (index._1, index._2))
-    else
-      return newSelectFirst(genfunc, currentSolution, 
-          (index._1, (index._2 + 1) % currentSolution.instance().nbJobs()), startIndex)
+      return (neighbor, (i, j))
+    
+    i += 1
+    j += 1
+    
+    while (i != startIndex._1 || j != startIndex._2) {
+      
+      neighbor = new Solution(currentSolution.instance(), genfunc(currentSolution, (i, j)))
+      
+      if (neighbor.score < currentSolution.score)
+        return (neighbor, (i, j))
+       
+      j = (j+1) % (currentSolution.instance.nbJobs-1)
+      if (j == i)
+        j = (j+1) % (currentSolution.instance.nbJobs-1)
+      if (j == startIndex._2)
+         i = (i+1) % (currentSolution.instance.nbJobs-1)
+       
+    }
+    
+    return (currentSolution, (startIndex._1, startIndex._2))
+      
+      
   }
 
   def selectBest(genfunc: (Solution, (Int, Int)) => ListBuffer[Int],
