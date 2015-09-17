@@ -49,7 +49,7 @@ object HillClimbing {
 
   var score: Int = 0
 
-  var start : (Int, Int) = (0,1)
+  var start : (Int, Int) = (0,0)
   var cursor : (Int, Int) = start
   
   def report(): String = return "score : " + score
@@ -67,6 +67,7 @@ object HillClimbing {
           select: (((Solution) => Solution), Solution) => (Solution) ): Unit = {
     start = cursor
     val selected = select(gen, currentSolution)
+//    println(selected)
     if (selected == currentSolution) {
       print(currentSolution.score() + "\t")
       return
@@ -93,9 +94,8 @@ object HillClimbing {
         cursor = ((cursor._1 + 1) % (current.instance.nbJobs-1), cursor._2)
     } else {
       val ret = current.solution().clone
-      ret -= ((current.solution())(cursor._1), (current.solution())(cursor._2))
-      ret.insert(cursor._2, (current.solution())(cursor._1))
-      ret.insert(cursor._1, (current.solution())(cursor._2))
+      ret(cursor._1) = current.solution()(cursor._2)
+      ret(cursor._2) = current.solution()(cursor._1)
       cursor = (cursor._1 ,(cursor._2 + 1) % (current.instance.nbJobs-1))
       if (cursor._2 == start._2)
          cursor = ((cursor._1 + 1) % (current.instance.nbJobs-1), cursor._2)
@@ -109,21 +109,22 @@ object HillClimbing {
   def selectFirst(genfunc: (Solution) => Solution,
                      currentSolution: Solution): Solution = {
     cursor = start
-    
+    val score = currentSolution.score
     var neigbhor : Solution = genfunc(currentSolution)
-    
-    while (neigbhor.score >= currentSolution.score) {
+    while (neigbhor.score >= score) {
        neigbhor = genfunc(currentSolution)
        if (start == cursor) return currentSolution
     }
-    
     neigbhor
   }
 
-  def selectBest(genfunc: (Solution) => ListBuffer[Int],
+  def selectBest(genfunc: (Solution) => Solution,
                  currentSolution: Solution): Solution = {
-    throw new NotImplementedException()
-    return new Solution(currentSolution.instance(), currentSolution.solution())
+    val neigbhors : ListBuffer[Solution] = new ListBuffer[Solution]()
+    do {
+        neigbhors += genfunc(currentSolution)
+    } while (cursor != start);
+    return neigbhors.minBy { x => x.score() }
   }
 
   //Init the first solution

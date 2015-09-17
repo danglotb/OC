@@ -17,7 +17,7 @@ object MainHillClimbing extends App {
   options.get("select") match {
     case Some(strSelect) => strSelect match {
       case "first" => selectFunc = HillClimbing.selectFirst
-//      case "best"  => selectFunc = HillClimbing.selectBest
+      case "best"  => selectFunc = HillClimbing.selectBest
       case _       => HillClimbingOptions.usage(options)
     }
     case _ => HillClimbingOptions.usage(options)
