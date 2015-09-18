@@ -9,7 +9,7 @@ import data.Instance
 class RandomSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, reader) {
 
   override def run(): Unit = {
-    this.instance = reader.getInstance()
+    instance = reader.getInstance()
     solution = scala.util.Random.shuffle(solution)
   }
 }

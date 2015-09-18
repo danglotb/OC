@@ -16,6 +16,8 @@ class MddSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, read
     this.instance = reader.getInstance()
 
     var indexRemains = solution.clone()
+    
+    solution.clear
 
     while (indexRemains.length != 0) {
       nextJobs = indexRemains.minBy { x =>
@@ -23,12 +25,13 @@ class MddSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, read
       }
       computeScore()
       indexRemains = indexRemains - nextJobs
+      solution += nextJobs
     }
     
     currentTime = 0
   }
 
-  override def computeScore(): Unit = {
+  def computeScore(): Unit = {
     currentTime += instance.processingTimes(nextJobs);
     val time = Math.max((currentTime - instance.dueDates(nextJobs)), 0);
     this.score += instance.weights(nextJobs) * time;

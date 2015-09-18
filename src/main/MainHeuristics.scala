@@ -9,9 +9,13 @@ import solver._
 
 object MainHeuristics extends App {
   val reader = new InstanceReader(100, "input/wt100.txt", 125)
-  val solver : RandomSolver = new RandomSolver(100,reader)
-//  val solver: Solver = new EddSolver(100, reader)
-//    val solver: Solver = new MddSolver(100, reader)
-  while (reader.hasNext())
+//val solver : RandomSolver = new RandomSolver(100,reader)
+//val solver: Solver = new EddSolver(100, reader)
+val solver: Solver = new MddSolver(100, reader)
+  while (reader.hasNext()) {
     solver.run()
+    println(solver.solution)
+  }
+    
+    
 }

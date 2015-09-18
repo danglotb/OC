@@ -2,6 +2,7 @@ package solver
 
 import data.InstanceReader
 import data.Instance
+import data.Solution
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -19,15 +20,6 @@ abstract class Solver(nbJobs: Int, reader: InstanceReader) {
   var score : Int = 0
 
   def run(): Unit
-
-  def computeScore() : Unit = {
-    var currentTime : Int = 0
-    for (i <- 0 until nbJobs) {
-      currentTime += instance.processingTimes(this.solution(i));
-      val time = Math.max((currentTime - instance.dueDates(this.solution(i))), 0);
-      this.score += instance.weights(this.solution(i)) * time;
-    }
-  }
 
   override def toString(): String = {
     return this.reader.nbRead + " : " + this.score;
