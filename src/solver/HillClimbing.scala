@@ -3,6 +3,7 @@ package solver
 import scala.collection.mutable.ListBuffer
 import data._
 import solver._
+import java.io._
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
@@ -43,18 +44,17 @@ object HillClimbingOptions {
 
 object HillClimbing {
 
+  val writer = new PrintWriter(new File("output/log"))
+  
   var solver: Solver = _
 
   var reader: InstanceReader = _
 
-  var score: Int = 0
-
   var start: (Int, Int) = (0, 0)
+  
   var cursor: (Int, Int) = start
 
-  def report(): String = return "score : " + score
-
-  def runAllInstances(gen: (Solution) => Solution,
+  def runAllInstances(name : String, gen: (Solution) => Solution,
                       select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
     while (reader.hasNext()) {
       start = (0, 1)
@@ -67,8 +67,7 @@ object HillClimbing {
           select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
     start = cursor
     val selected = select(gen, currentSolution)
-    println(selected)
-    if (selected == currentSolution) {
+    if ( (selected == currentSolution)||(selected.score == currentSolution.score) ) {
       print(currentSolution.score() + "\t")
       return
     }
@@ -125,7 +124,7 @@ object HillClimbing {
                   currentSolution: Solution): Solution = {
     cursor = start
     val score = currentSolution.score
-    var neigbhor: Solution = genfunc(currentSolution)
+    var neigbhor : Solution = genfunc(currentSolution)
     while (neigbhor.score >= score) {
       neigbhor = genfunc(currentSolution)
       if (start == cursor) return currentSolution
@@ -138,7 +137,7 @@ object HillClimbing {
     val neigbhors: ListBuffer[Solution] = new ListBuffer[Solution]()
     do {
       neigbhors += genfunc(currentSolution)
-    } while (cursor != start);
+    } while (start != cursor);
     return neigbhors.minBy { x => x.score() }
   }
 
@@ -160,9 +159,8 @@ object HillClimbing {
   }
 
   def genFirstSolution(): Solution = {
-//    solver.run()
-//    return new Solution(solver.instance, solver.solution)
-    return null
+    solver.run()
+    return solver.solution
   }
 
 }
