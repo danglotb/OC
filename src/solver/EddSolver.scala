@@ -1,6 +1,7 @@
 package solver
 
-import data.InstanceReader
+import data._
+import scala.collection.mutable.ListBuffer
 
 /**
  * @author danglot
@@ -8,8 +9,10 @@ import data.InstanceReader
 class EddSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, reader) {
 
   def run(): Unit = {
-    this.instance = reader.getInstance()
-    solution = solution.sortBy { x => instance.dueDates(x) }
+    val solutionIndex : ListBuffer[Int] = new ListBuffer[Int]()
+    val instance : Instance = reader.getInstance()
+    for (i <- 0 until nbJobs) solutionIndex += i
+    solution = new Solution(instance,  solutionIndex.sortBy { x => instance.dueDates(x) })
   }
 
 }

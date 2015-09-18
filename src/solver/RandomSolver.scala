@@ -1,7 +1,8 @@
 package solver
 
-import data.InstanceReader
-import data.Instance
+import data._
+
+import scala.collection.mutable.ListBuffer
 
 /**
  * @author danglot
@@ -9,7 +10,8 @@ import data.Instance
 class RandomSolver(nbJobs: Int, reader: InstanceReader) extends Solver(nbJobs, reader) {
 
   override def run(): Unit = {
-    instance = reader.getInstance()
-    solution = scala.util.Random.shuffle(solution)
+    val solutionIndex : ListBuffer[Int] = new ListBuffer[Int]()
+    for (i <- 0 until nbJobs) solutionIndex += i
+    solution = new Solution(reader.getInstance(),  scala.util.Random.shuffle(solutionIndex))
   }
 }

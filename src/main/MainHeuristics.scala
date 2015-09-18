@@ -12,10 +12,10 @@ object MainHeuristics extends App {
 //val solver : RandomSolver = new RandomSolver(100,reader)
 //val solver: Solver = new EddSolver(100, reader)
 val solver: Solver = new MddSolver(100, reader)
-  while (reader.hasNext()) {
+//  while (reader.hasNext()) {
     solver.run()
     println(solver.solution)
-  }
+//  }
     
     
 }

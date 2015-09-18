@@ -160,8 +160,9 @@ object HillClimbing {
   }
 
   def genFirstSolution(): Solution = {
-    solver.run()
-    return new Solution(solver.instance, solver.solution)
+//    solver.run()
+//    return new Solution(solver.instance, solver.solution)
+    return null
   }
 
 }
