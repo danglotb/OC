@@ -49,14 +49,17 @@ object HillClimbing {
   var start: (Int, Int) = (0, 0)
   
   var cursor: (Int, Int) = start
+  
+  var scores : ListBuffer[Int] = new ListBuffer[Int]()
+  var times : ListBuffer[Long] = new ListBuffer[Long]()
 
   def runAllInstances(gen: (Solution) => Solution,
                       select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
-    var score : Int = 0
     while (reader.hasNext()) {
       start = (0, 1)
-      val times = System.currentTimeMillis()
-      score = run(genFirstSolution, gen, select)
+      val time = System.currentTimeMillis()
+      scores += run(genFirstSolution, gen, select)
+      times += (System.currentTimeMillis() - time)
     }
   }
 
@@ -66,7 +69,7 @@ object HillClimbing {
     start = cursor
     val selected = select(gen, currentSolution)
     if ( (selected == currentSolution)||(selected.score == currentSolution.score) ) {
-      print(currentSolution.score() + "\t")
+//      print(currentSolution.score() + "\t")
       return selected.score
     }
     run(selected, gen, select)

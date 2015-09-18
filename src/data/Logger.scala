@@ -7,7 +7,9 @@ import java.io._
  */
 object Logger {
   
-  val writer : Writer = new PrintWriter("output/log")
+  var writer : PrintWriter = _
+  
+  def open(pathname : String) : Unit = writer = new PrintWriter(new File(pathname))
   
   def write(str : String) : Unit = writer.write(str)
   

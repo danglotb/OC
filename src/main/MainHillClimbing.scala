@@ -11,7 +11,7 @@ object MainHillClimbing extends App {
   var selectFunc: ((((Solution) => Solution), Solution) => (Solution)) = _
   var initFunc: (String) => Unit = _
   var genFunc: (Solution) => Solution = _
-  var nbRuns: Int = 30
+  var nbRuns: Int = 1
   var pathname: String = ""
   
   var name : String = ""
@@ -21,8 +21,8 @@ object MainHillClimbing extends App {
       case "first" => selectFunc = HillClimbing.selectFirst
       case "best"  => selectFunc = HillClimbing.selectBest
       case _       => HillClimbingOptions.usage(options)
-      name += strSelect
     }
+    name += strSelect
     case _ => HillClimbingOptions.usage(options)
   }
 
@@ -32,19 +32,19 @@ object MainHillClimbing extends App {
       case "edd" => initFunc = HillClimbing.initEdd
       case "mdd" => initFunc = HillClimbing.initMdd
       case _     => HillClimbingOptions.usage(options)
-      name += strInit
     }
+    name += strInit
     case _ => HillClimbingOptions.usage(options)
   }
 
   options.get("neighbor") match {
     case Some(strNeighbor) => strNeighbor match {
       case "insert"   => genFunc = HillClimbing.insertGen
-      case "swap"     => genFunc = HillClimbing.swapGen
+      case "swap"     => genFunc = HillClimbing.swapGen 
       case "exchange" => genFunc = HillClimbing.exchangeGen
       case _          => HillClimbingOptions.usage(options)
-       name += strNeighbor
     }
+    name += strNeighbor
     case _ => HillClimbingOptions.usage(options)
   }
 
@@ -58,11 +58,35 @@ object MainHillClimbing extends App {
     case _          => HillClimbingOptions.usage(options)
   }
   
-  Logger.write("\t" + name + "\n")
+  Logger.open("output/"+name+".log")
 
-  initFunc(pathname)
   val times = System.currentTimeMillis()
-  HillClimbing.runAllInstances(genFunc, selectFunc)
-  println("Total for 125 instances : " + (System.currentTimeMillis() - times) + " ms")
+  val values : ListBuffer[(ListBuffer[Int], ListBuffer[Long])] = new ListBuffer[(ListBuffer[Int], ListBuffer[Long])]()
+  for (i <- 0 until nbRuns) {
+    println(i+" run")
+    initFunc(pathname)
+    HillClimbing.runAllInstances(genFunc, selectFunc)
+    values += ( (HillClimbing.scores, HillClimbing.times) )
+  }
+  
+  Logger.write("\t")
+  
+  for (i <- 0 until nbRuns)
+    Logger.write(i+" scores"+"\t"+i+" times"+"\t")
+  
+  Logger.write("\n")
+  
+  for (i <- 0 until values.length) {
+    var str : String = ""
+    for (j <- 0 until values(i)._1.length) 
+      str +=  j+"\t"+values(i)._1(j) + "\t" + values(i)._2(j)+ "\n"
+    Logger.write(str)
+  }
+  
+  Logger.close()
+  
+
+  
+    
 }
 
