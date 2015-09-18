@@ -3,8 +3,6 @@ package solver
 import scala.collection.mutable.ListBuffer
 import data._
 import solver._
-import java.io._
-import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
  * @author danglot
@@ -44,7 +42,7 @@ object HillClimbingOptions {
 
 object HillClimbing {
 
-  val writer = new PrintWriter(new File("output/log"))
+  
   
   var solver: Solver = _
 
@@ -54,22 +52,23 @@ object HillClimbing {
   
   var cursor: (Int, Int) = start
 
-  def runAllInstances(name : String, gen: (Solution) => Solution,
+  def runAllInstances(gen: (Solution) => Solution,
                       select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
+    var score : Int = 0
     while (reader.hasNext()) {
       start = (0, 1)
-      run(genFirstSolution, gen, select)
+      score = run(genFirstSolution, gen, select)
     }
   }
 
   def run(currentSolution: Solution,
           gen: (Solution) => Solution,
-          select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
+          select: (((Solution) => Solution), Solution) => (Solution)): Int = {
     start = cursor
     val selected = select(gen, currentSolution)
     if ( (selected == currentSolution)||(selected.score == currentSolution.score) ) {
       print(currentSolution.score() + "\t")
-      return
+      return selected.score
     }
     run(selected, gen, select)
   }

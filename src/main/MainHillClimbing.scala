@@ -52,6 +52,8 @@ object MainHillClimbing extends App {
     case Some(file) => pathname = file.toString
     case _          => HillClimbingOptions.usage(options)
   }
+  
+  
 
   initFunc(pathname)
   val times = System.currentTimeMillis()
