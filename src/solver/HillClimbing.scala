@@ -55,6 +55,8 @@ object HillClimbing {
 
   def runAllInstances(gen: (Solution) => Solution,
                       select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
+    scores.clear
+    times.clear
     while (reader.hasNext()) {
       start = (0, 1)
       val time = System.currentTimeMillis()

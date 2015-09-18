@@ -11,7 +11,7 @@ object MainHillClimbing extends App {
   var selectFunc: ((((Solution) => Solution), Solution) => (Solution)) = _
   var initFunc: (String) => Unit = _
   var genFunc: (Solution) => Solution = _
-  var nbRuns: Int = 1
+  var nbRuns: Int = 2
   var pathname: String = ""
   
   var name : String = ""
@@ -76,16 +76,14 @@ object MainHillClimbing extends App {
   
   Logger.write("\n")
   
-  for (i <- 0 until values.length) {
-    var str : String = ""
-    for (j <- 0 until values(i)._1.length) 
-      str +=  j+"\t"+values(i)._1(j) + "\t" + values(i)._2(j)+ "\n"
-    Logger.write(str)
+  for (i <- 0 until values(0)._1.length) {
+    var str : String = i+ "\t"
+    for (j <- 0 until values.length) 
+      str += values(j)._1(i) + "\t" + values(j)._2(i) + "\t"
+    Logger.write(str+"\n")
   }
   
   Logger.close()
-  
-
   
     
 }
