@@ -42,8 +42,6 @@ object HillClimbingOptions {
 
 object HillClimbing {
 
-  
-  
   var solver: Solver = _
 
   var reader: InstanceReader = _
@@ -57,6 +55,7 @@ object HillClimbing {
     var score : Int = 0
     while (reader.hasNext()) {
       start = (0, 1)
+      val times = System.currentTimeMillis()
       score = run(genFirstSolution, gen, select)
     }
   }

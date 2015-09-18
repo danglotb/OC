@@ -13,12 +13,15 @@ object MainHillClimbing extends App {
   var genFunc: (Solution) => Solution = _
   var nbRuns: Int = 30
   var pathname: String = ""
+  
+  var name : String = ""
 
   options.get("select") match {
     case Some(strSelect) => strSelect match {
       case "first" => selectFunc = HillClimbing.selectFirst
       case "best"  => selectFunc = HillClimbing.selectBest
       case _       => HillClimbingOptions.usage(options)
+      name += strSelect
     }
     case _ => HillClimbingOptions.usage(options)
   }
@@ -29,6 +32,7 @@ object MainHillClimbing extends App {
       case "edd" => initFunc = HillClimbing.initEdd
       case "mdd" => initFunc = HillClimbing.initMdd
       case _     => HillClimbingOptions.usage(options)
+      name += strInit
     }
     case _ => HillClimbingOptions.usage(options)
   }
@@ -39,6 +43,7 @@ object MainHillClimbing extends App {
       case "swap"     => genFunc = HillClimbing.swapGen
       case "exchange" => genFunc = HillClimbing.exchangeGen
       case _          => HillClimbingOptions.usage(options)
+       name += strNeighbor
     }
     case _ => HillClimbingOptions.usage(options)
   }
@@ -53,11 +58,11 @@ object MainHillClimbing extends App {
     case _          => HillClimbingOptions.usage(options)
   }
   
-  
+  Logger.write("\t" + name + "\n")
 
   initFunc(pathname)
   val times = System.currentTimeMillis()
-  HillClimbing.run(HillClimbing.genFirstSolution, genFunc, selectFunc)
-  println(System.currentTimeMillis() - times + " ms")
+  HillClimbing.runAllInstances(genFunc, selectFunc)
+  println("Total for 125 instances : " + (System.currentTimeMillis() - times) + " ms")
 }
 
