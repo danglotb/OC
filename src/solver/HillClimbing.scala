@@ -72,9 +72,7 @@ object HillClimbing {
           gen: (Solution) => Solution,
           select: (((Solution) => Solution), Solution) => (Solution)): Int = {
     start = cursor
-    val time = System.currentTimeMillis()
     val selected = select(gen, currentSolution)
-    println("selection : " + (System.currentTimeMillis() - time) + " ms")
     if ( (selected == currentSolution)||(selected.score == currentSolution.score) ) {
 //      print(currentSolution.score() + "\t")
       return selected.score
