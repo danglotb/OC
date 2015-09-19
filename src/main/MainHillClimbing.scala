@@ -11,7 +11,7 @@ object MainHillClimbing extends App {
   var selectFunc: ((((Solution) => Solution), Solution) => (Solution)) = _
   var initFunc: (String) => Unit = _
   var genFunc: (Solution) => Solution = _
-  var nbRuns: Int = 2
+  var nbRuns: Int = 30
   var pathname: String = ""
   
   var name : String = ""
@@ -58,32 +58,38 @@ object MainHillClimbing extends App {
     case _          => HillClimbingOptions.usage(options)
   }
   
-  Logger.open("output/"+name+".log")
-
-  val times = System.currentTimeMillis()
-  val values : ListBuffer[(ListBuffer[Int], ListBuffer[Long])] = new ListBuffer[(ListBuffer[Int], ListBuffer[Long])]()
-  for (i <- 0 until nbRuns) {
-    println(i+" run")
-    initFunc(pathname)
-    HillClimbing.runAllInstances(genFunc, selectFunc)
-    values += ( (HillClimbing.scores, HillClimbing.times) )
-  }
+  initFunc(pathname)
+  val time = System.currentTimeMillis()
+  HillClimbing.run(HillClimbing.genFirstSolution(), genFunc, selectFunc)
+  println(System.currentTimeMillis() - time)
   
-  Logger.write("\t")
   
-  for (i <- 0 until nbRuns)
-    Logger.write(i+" scores"+"\t"+i+" times"+"\t")
-  
-  Logger.write("\n")
-  
-  for (i <- 0 until values(0)._1.length) {
-    var str : String = i+ "\t"
-    for (j <- 0 until values.length) 
-      str += values(j)._1(i) + "\t" + values(j)._2(i) + "\t"
-    Logger.write(str+"\n")
-  }
-  
-  Logger.close()
+//  Logger.open("output/"+name+".log")
+//
+//  val times = System.currentTimeMillis()
+//  val values : ListBuffer[(ListBuffer[Int], ListBuffer[Long])] = new ListBuffer[(ListBuffer[Int], ListBuffer[Long])]()
+//  for (i <- 0 until nbRuns) {
+//    println(i+" run")
+//    initFunc(pathname)
+//    HillClimbing.runAllInstances(genFunc, selectFunc)
+//    values += ( (HillClimbing.scores, HillClimbing.times) )
+//  }
+//  
+//  Logger.write("\t")
+//  
+//  for (i <- 0 until nbRuns)
+//    Logger.write(i+" scores"+"\t"+i+" times"+"\t")
+//  
+//  Logger.write("\n")
+//  
+//  for (i <- 0 until values(0)._1.length) {
+//    var str : String = i+ "\t"
+//    for (j <- 0 until values.length) 
+//      str += values(j)._1(i) + "\t" + values(j)._2(i) + "\t"
+//    Logger.write(str+"\n")
+//  }
+//  
+//  Logger.close()
   
     
 }
