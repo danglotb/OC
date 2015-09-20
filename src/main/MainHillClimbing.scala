@@ -6,35 +6,8 @@ import solver._
 
 object MainHillClimbing extends App {
 
-  def run(): Unit = {
-    Logger.open("output/" + name + ".log")
-
-    val values: ListBuffer[(Int, Long)] = new ListBuffer[(Int, Long)]()
-    for (i <- 0 until nbRuns) {
-      val time : Long =  System.currentTimeMillis()
-      println(i + " run")
-      initFunc(pathname)
-      values += ( (HillClimbing.run(HillClimbing.genFirstSolution(), genFunc, selectFunc),
-          System.currentTimeMillis() - time) )
-    }
-
-    Logger.write("\tscores\ttimes\t\n")
-
-    var avgTime: Long = 0
-    var avgScore: Int = 0
-
-    values.foreach {x => 
-      avgTime += x._2      
-      avgScore += x._1
-    }
-    
-    Logger.write("0\t"+avgScore/nbRuns+"\t"+avgTime/nbRuns+"\n")
-
-    Logger.close()
-  }
-
   def runAll(): Unit = {
-    Logger.open("output/" + name + ".log")
+    Logger.open("output/log")
 
     val values: ListBuffer[(ListBuffer[Int], ListBuffer[Long])] = new ListBuffer[(ListBuffer[Int], ListBuffer[Long])]()
     for (i <- 0 until nbRuns) {
@@ -44,26 +17,32 @@ object MainHillClimbing extends App {
       values += ((HillClimbing.scores, HillClimbing.times))
     }
 
-    Logger.write("\tscores\ttimes\t\n")
-
-    var avgTime: Long = 0
-    var avgScore: Int = 0
-
-    var str: String = ""
-
-    for (i <- 0 until values(0)._1.length) {
-      str += i + "\t"
+    val avgTime : Array[Long] = Array.ofDim[Long](125)
+    val avgScore : Array[Int] = Array.ofDim[Int](125)
+    
+    var strTime : String = name+"Time"
+    var strScore : String = name+"Score"
+    
+    for( i <- 0 until 125) {
       for (j <- 0 until values.length) {
-        avgScore += values(j)._1(i)
-        avgTime += values(j)._2(i)
+        avgScore(i) += (values(j)._1(i))
+        avgTime(i) += (values(j)._2(i))
       }
-      str += avgScore / nbRuns + "\t" + avgTime / nbRuns + "\n"
-      avgScore = 0
-      avgTime = 0
     }
-
-    Logger.write(str)
-
+    
+    for( i <- 0 until 125) {
+      avgScore(i) = (avgScore(i) / nbRuns)
+      avgTime(i) = (avgTime(i) / nbRuns)
+    }
+    
+    for (i <- 0 until 125) {
+      strScore += "\t" + avgScore(i)
+      strTime += "\t" + avgTime(i)
+    }
+    
+    Logger.write(strScore+"\n")
+    Logger.write(strTime+"\n")
+    
     Logger.close()
   }
 
@@ -121,8 +100,8 @@ object MainHillClimbing extends App {
     case Some(file) => pathname = file.toString
     case _          => HillClimbingOptions.usage(options)
   }
-
-  MainHillClimbing.run()
-
+  
+  runAll
+  
 }
 

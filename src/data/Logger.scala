@@ -7,13 +7,12 @@ import java.io._
  */
 object Logger {
   
-  var writer : PrintWriter = _
+  var writer : FileWriter = _
   
-  def open(pathname : String) : Unit = writer = new PrintWriter(new File(pathname))
+  def open(pathname : String) : Unit = writer = new FileWriter(pathname, true)
   
   def write(str : String) : Unit = writer.write(str)
   
   def close() : Unit = writer.close()
-  
   
 }
