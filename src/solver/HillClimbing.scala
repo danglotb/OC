@@ -50,9 +50,38 @@ object HillClimbing {
   
   var cursor: (Int, Int) = start
   
-  var scores : ListBuffer[Int] = new ListBuffer[Int]()
-  var times : ListBuffer[Long] = new ListBuffer[Long]()
+  val scores : ListBuffer[Int] = new ListBuffer[Int]()
+  val times : ListBuffer[Long] = new ListBuffer[Long]()
 
+  def runPipedVnd(arrayGen : Array[(Solution) => Solution], 
+      current : Solution,
+      select : (((Solution) => Solution), Solution) => (Solution),
+      i : Int,
+      round : Boolean,
+      start : Int) : Solution = {
+    if (i == start && round)
+      return current
+    val selected = select( arrayGen(i), (current))
+    if (selected.score < current.score)
+      runPipedVnd(arrayGen,selected,select,i,false,i)
+    else
+      runPipedVnd(arrayGen,current,select,(i+1)%(arrayGen.length-1),true,start)
+  }
+  
+  def runVnd(arrayGen : Array[(Solution) => Solution], 
+      current : Solution,
+      select : (((Solution) => Solution), Solution) => (Solution),
+      i : Int) : Solution = {
+    if (i > arrayGen.length-1)
+      return current
+    val selected = select( arrayGen(i), (current))
+    
+    if (selected.score < current.score)
+      runVnd(arrayGen,selected,select,0)
+     else
+      runVnd(arrayGen,current,select,i+1)
+  }
+  
   def runAllInstances(gen: (Solution) => Solution,
                       select: (((Solution) => Solution), Solution) => (Solution)): Unit = {
     scores.clear
@@ -70,11 +99,10 @@ object HillClimbing {
 
   def run(currentSolution: Solution,
           gen: (Solution) => Solution,
-          select: (((Solution) => Solution), Solution) => (Solution)): Int = {
+          select: (((Solution) => Solution), Solution) => (Solution)) : Int = {
     start = cursor
     val selected = select(gen, currentSolution)
     if ( (selected == currentSolution)||(selected.score == currentSolution.score) ) {
-//      print(currentSolution.score() + "\t")
       return selected.score
     }
     run(selected, gen, select)
@@ -149,19 +177,19 @@ object HillClimbing {
 
   //Init the first solution
 
-  def initRandom(pathname: String): Unit = {
-    reader = new InstanceReader(100, pathname, 125)
-    solver = new RandomSolver(100, reader)
+  def initRandom(pathname: String, nbJobs : Int, nbInstances : Int, format : Boolean = false) : Unit = {
+    reader = new InstanceReader(nbJobs, pathname, nbInstances, format)
+    solver = new RandomSolver(nbJobs, reader)
   }
 
-  def initEdd(pathname: String): Unit = {
-    reader = new InstanceReader(100, pathname, 125)
-    solver = new EddSolver(100, reader)
+  def initEdd(pathname: String, nbJobs : Int, nbInstances : Int, format : Boolean = false) : Unit = {
+    reader = new InstanceReader(nbJobs, pathname, nbInstances, format)
+    solver = new EddSolver(nbJobs, reader)
   }
 
-  def initMdd(pathname: String): Unit = {
-    reader = new InstanceReader(100, pathname, 125)
-    solver = new MddSolver(100, reader)
+  def initMdd(pathname: String, nbJobs : Int, nbInstances : Int, format : Boolean = false) : Unit = {
+    reader = new InstanceReader(nbJobs, pathname, nbInstances, format)
+    solver = new MddSolver(nbJobs, reader)
   }
 
   def genFirstSolution(): Solution = {
