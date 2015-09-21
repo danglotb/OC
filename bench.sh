@@ -17,3 +17,5 @@ scala11 -cp bin main.MainHillClimbing -select first -neighbor insert -init edd -
 #scala11 -cp bin main.MainHillClimbing -select best -neighbor insert -init rnd -k 30 -file input/wt100.txt
 #scala11 -cp bin main.MainHillClimbing -select best -neighbor insert -init mdd -k 30 -file input/wt100.txt
 #scala11 -cp bin main.MainHillClimbing -select best -neighbor insert -init edd -k 30 -file input/wt100.txt
+scala11 -cp bin main.MainPipedVnd
+scala11 -cp bin main.MainVnd

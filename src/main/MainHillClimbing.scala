@@ -112,21 +112,68 @@ object MainHillClimbing extends App {
 
 object MainVnd extends App {
 
+  Logger.open("output/logvnd")
+  
+  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  var time : Long = System.currentTimeMillis
+  Logger.write("exchange_insert_swap_rnd\t"+ 
+      (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
+ 
+  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+   Logger.write("exchange_swap_insert_rnd\t"+ 
+       (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
+      
   HillClimbing.initMdd("input/wt100.txt", 100, 125)
-
-  println(HillClimbing.runVnd(Array[(Solution) => Solution](HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0))
+  time = System.currentTimeMillis
+  Logger.write("exchange_insert_swap_mdd\t"+ 
+      (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
+ 
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+   Logger.write("exchange_swap_insert_mdd\t"+ 
+       (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
 
 }
 
 object MainPipedVnd extends App {
 
-  var time : Long = 0
+ Logger.open("output/logpipedvnd")
+  
+  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  var time : Long = System.currentTimeMillis
+  Logger.write("exchange_insert_swap_rnd\t"+ 
+      (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
  
+  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+   Logger.write("exchange_swap_insert_rnd\t"+ 
+       (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
+      
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+  Logger.write("exchange_insert_swap_mdd\t"+ 
+      (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
+ 
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+   Logger.write("exchange_swap_insert_mdd\t"+ 
+       (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms")
+  
+  //Best Config find by score/time
   HillClimbing.initMdd("input/wt100.txt", 100, 125)  
     time = System.currentTimeMillis()
-  println(HillClimbing.runPipedVnd(Array(HillClimbing.insertGen, HillClimbing.exchangeGen, HillClimbing.swapGen), 
-      HillClimbing.genFirstSolution(), HillClimbing.selectBest, 0, false, 0))
-      println(System.currentTimeMillis() - time)
+  Logger.write("insert_swap_best_mdd\t"+
+    (HillClimbing.runPipedVnd(Array(HillClimbing.insertGen, HillClimbing.swapGen), 
+      HillClimbing.genFirstSolution(), HillClimbing.selectBest, 0, false, 0)).score +"\t"+ (System.currentTimeMillis() - time) + "ms")
       
 
 }
