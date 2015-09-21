@@ -65,7 +65,7 @@ object HillClimbing {
     if (selected.score < current.score)
       runPipedVnd(arrayGen,selected,select,i,false,i)
     else
-      runPipedVnd(arrayGen,current,select,(i+1)%(arrayGen.length-1),true,start)
+      runPipedVnd(arrayGen,current,select,(i+1)%(arrayGen.length),true,start)
   }
   
   def runVnd(arrayGen : Array[(Solution) => Solution], 
@@ -74,8 +74,7 @@ object HillClimbing {
       i : Int) : Solution = {
     if (i > arrayGen.length-1)
       return current
-    val selected = select( arrayGen(i), (current))
-    
+    val selected = select(arrayGen(i), (current))
     if (selected.score < current.score)
       runVnd(arrayGen,selected,select,0)
      else
