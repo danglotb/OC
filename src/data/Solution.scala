@@ -21,6 +21,8 @@ class Solution(instance : Instance, solution : ListBuffer[Int]) {
   override def toString() : String = "score "+score()+"\n"+solution+"\n"+solution.length+"\n"+check
   
   def ==(other : Solution) : Boolean = solution.equals(other.solution())
+  
+  def !=(other : Solution) : Boolean = !(this == other)
  
   def check() : Boolean = solution.distinct.length == solution.length
   

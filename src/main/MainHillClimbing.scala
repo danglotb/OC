@@ -185,7 +185,6 @@ object MainPipedVnd extends App {
     (HillClimbing.runPipedVnd(Array(HillClimbing.insertGen, HillClimbing.swapGen), 
       HillClimbing.genFirstSolution(), HillClimbing.selectBest, 0, false, 0)).score +"\t"+ (System.currentTimeMillis() - time) + "ms\n")
       
-      
   Logger.close
 
 }
