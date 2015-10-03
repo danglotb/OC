@@ -89,6 +89,7 @@ object HillClimbing {
       start = (0, 1)
       val time = System.currentTimeMillis()
       scores += run(genFirstSolution, gen, select)
+      println((System.currentTimeMillis() - time))
       times += (System.currentTimeMillis() - time)
       if (times.length % 25 == 0)
         println(times.length)
