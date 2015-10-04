@@ -15,8 +15,14 @@ object MainHillClimbing extends App {
   var name: String = ""
 
   parseOptions
-  runAll
+  run
 
+  def run() : Unit = {
+    HillClimbing.initEdd(pathname, 100, 125, false)
+    println(HillClimbing.run(HillClimbing.genFirstSolution, HillClimbing.insertGen , HillClimbing.selectBest))
+  }
+  
+  
   def runAll(): Unit = {
     Logger.open("output/log")
 
