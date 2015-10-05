@@ -1,21 +1,71 @@
 package main
 
-import sys.process._
+import data.Util
 
-object Util {
+object MainPlotDeviationILS extends App {
 
-  def launchPlot(outPathname: String): Unit = {
-    try {
-      Seq("gnuplot", "-persist", outPathname + ".plt").!!
-    } catch {
-      case ioe: java.io.IOException => println("Required gnuplot set up on the machine. Check if it is in your Path")
-    }
+  val source = scala.io.Source.fromFile("output/ils.log")
+
+  val iterator = source getLines
+
+  var str = ""
+
+  while (iterator hasNext) {
+
+    val sc = new java.util.Scanner(iterator next)
+
+    sc useDelimiter ("\t")
+
+    str += (sc next) + "\t"
+
+    //thrash the score
+    (sc next)
+    (sc next)
+    (sc next)
+
+    str += (sc next) + "\n"
   }
+  
+  Util.write("data/ilsdeviation.dat", str)
 
-  def write(name: String, str: String): Unit = {
-    Some(new java.io.PrintWriter(name)).foreach { p => p.write(str); p.close }
+  str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/ilsdeviation.dat\' using 2:xtic(1) title \'Deviation\'"
+  
+  Util.write("plot/ilsdeviation.plt", str)  
+  
+  (source close)
+  
+}
+
+object MainPlotDeviation extends App {
+
+  val source = scala.io.Source.fromFile("output/besteddinsertdeviation.log")
+
+  val iterator = source getLines
+
+  var str = ""
+
+  while (iterator hasNext) {
+
+    val sc = new java.util.Scanner(iterator next)
+
+    sc useDelimiter ("\t")
+
+    str += (sc next) + "\t"
+
+    //thrash the score
+    sc next
+
+    str += (sc next) + "\n"
   }
+  
+  Util.write("data/beedinsertdeviation.dat", str)
 
+  str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/beedinsertdeviation.dat\' using 2:xtic(1) title \'Deviation\'"
+
+   Util.write("plot/beedinsertdeviation.plt", str)  
+  
+  (source close)
+  
 }
 
 object MainGetBest extends App {
@@ -123,44 +173,47 @@ object MainPlot extends App {
   //  
   //  Util.write("plot/besteddinsertScore.plt", str)
 
-//  val listScoreEasy = listScore.filter { x => x < 100000 }
-//  val listScoreMedium = listScore.filter { x => (100000 <= x && x < 500000) }
-//  val listScoreHard = listScore.filter { x => (500000 <= x) }
-//
-//  var str = ""
-//
-//  for (i <- 0 until listScoreEasy.length)
-//    str += i + "\t" + listScoreEasy(i) + "\n"
-//
-//  Util.write("data/besteddinserteasy.dat", str)
-//
-//  str = ""
-//
-//  for (i <- 0 until listScoreMedium.length)
-//    str += i + "\t" + listScoreMedium(i) + "\n"
-//
-//  Util.write("data/besteddinsertmedium.dat", str)
-//
-//  str = ""
-//
-//  for (i <- 0 until listScoreHard.length)
-//    str += i + "\t" + listScoreHard(i) + "\n"
-//
-//  Util.write("data/besteddinserthard.dat", str)
-//  
-//  
-//
-//  str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinserteasy.dat\' using 2:xtic(1) title \'Score Easy\'"
-//  
-//  Util.write("plot/besteddinserteasy.plt", str)
-//  
-//   str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinsertmedium.dat\' using 2:xtic(1) title \'Score Medium\'"
-//  
-//  Util.write("plot/besteddinsertmedium.plt", str)
-//  
-//   str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinserthard.dat\' using 2:xtic(1) title \'Score Hard\'"
-//  
-//  Util.write("plot/besteddinserthard.plt", str)
+  val listScoreEasy = listScore.filter { x => x < 100000 }
+  val listScoreMedium = listScore.filter { x => (100000 <= x && x < 500000) }
+  val listScoreHard = listScore.filter { x => (500000 <= x) }
+
+  var str = ""
+
+  for (i <- 0 until listScoreEasy.length) {
+    str += i + "\t" + listScore.indexOf(listScoreEasy(i)) + "\n"
+  }
+
+  Util.write("data/besteddinserteasy.dat", str)
+
+  str = ""
+
+  for (i <- 0 until listScoreMedium.length) {
+    str += i + "\t" + listScore.indexOf(listScoreMedium(i)) + "\n"
+  }
+
+  Util.write("data/besteddinsertmedium.dat", str)
+
+  str = ""
+
+  for (i <- 0 until listScoreHard.length) {
+    str += i + "\t" + listScore.indexOf(listScoreHard(i)) + "\n"
+  }
+
+  Util.write("data/besteddinserthard.dat", str)
+
+  //  
+  //
+  //  str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinserteasy.dat\' using 2:xtic(1) title \'Score Easy\'"
+  //  
+  //  Util.write("plot/besteddinserteasy.plt", str)
+  //  
+  //   str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinsertmedium.dat\' using 2:xtic(1) title \'Score Medium\'"
+  //  
+  //  Util.write("plot/besteddinsertmedium.plt", str)
+  //  
+  //   str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinserthard.dat\' using 2:xtic(1) title \'Score Hard\'"
+  //  
+  //  Util.write("plot/besteddinserthard.plt", str)
 
   source close
 }

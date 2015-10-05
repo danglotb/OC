@@ -18,8 +18,16 @@ object MainHillClimbing extends App {
   run
 
   def run() : Unit = {
+    val optimas = Util.readOptimas
+    Logger.open("output/besteddinsertdeviation.log")
     HillClimbing.initEdd(pathname, 100, 125, false)
-    println(HillClimbing.run(HillClimbing.genFirstSolution, HillClimbing.insertGen , HillClimbing.selectBest))
+    for (i <- 0 until 125) {
+      val score = HillClimbing.run(HillClimbing.genFirstSolution, HillClimbing.insertGen , HillClimbing.selectBest)
+      val deviation : Float = if (optimas(i) != 0) (100.0*(score.toFloat - optimas(i).toFloat)/optimas(i).toFloat).toFloat else (optimas(i)-score).toFloat
+      Logger.write(i+"\t"+score+"\t"+deviation+"\t"+optimas(i)+"\n")
+      print(i+"\t"+score+"\t"+deviation+"\t"+optimas(i)+"\n")
+    }
+    Logger.close()
   }
   
   
