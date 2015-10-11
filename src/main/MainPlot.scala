@@ -2,6 +2,129 @@ package main
 
 import data.Util
 
+object MainPrintHarderPrbl extends App {
+  val source = scala.io.Source.fromFile("output/log")
+  
+  val iterator = source getLines
+  
+  var current : String = ""
+  
+  while (! (current startsWith("bestmddswap")))
+    current = iterator next
+    
+  val scswap = new java.util.Scanner(current)
+  scswap useDelimiter("\t")
+  
+  while (! (current startsWith("besteddinsert")))
+    current = iterator next
+    
+  val scinsert = new java.util.Scanner(current)
+  scinsert useDelimiter("\t")
+  
+  var str = ""
+  
+  var counter = 0
+  
+  while (scswap hasNext) {
+    str += counter + "\t" + scswap.next + "\t" + scinsert.next + "\n"
+    counter += 1
+  }
+  
+  println(str)
+  
+}
+
+object MainPlotHarderProblem extends App {
+  
+  val source = scala.io.Source.fromFile("output/log")
+  
+  val iterator = source getLines
+  
+  var current : String = ""
+  
+  while (! (current startsWith("besteddinsert")))
+    current = iterator next
+    
+  val sc = new java.util.Scanner(current)
+  
+  println(current)
+  
+  sc useDelimiter("\t")
+  
+  val listIndex = new scala.collection.mutable.ListBuffer[Int]()
+  
+  //trash label
+  sc next
+  
+  var counter = 0
+  
+  var str = ""
+  
+  while(sc hasNext) {
+    val currentScore = sc.next.toInt
+    if (currentScore > 500000) {
+      str += counter + "\t" + currentScore + "\n"
+      listIndex += counter
+      counter += 1  
+      println(counter+":"+currentScore)
+    }
+  }
+  
+  println(str)
+  
+  Util.write("data/besteddinserthardScore.dat", str)
+  
+  str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/besteddinserthardScore.dat\' using 2:xtic(1) title \'Score On Hard Prbl\'"
+ 
+  Util.write("plot/besteddinserthardScore.plt", str)
+  
+  source close
+   
+//  val source2 = scala.io.Source.fromFile("output/log")
+//  
+//  val iterator2 = source2 getLines
+//  
+//  current = ""
+//  
+//  while (! (current startsWith("bestmddswap")))
+//    current = iterator2 next
+//    
+//  println(current)
+//    
+//  val sc2 = new java.util.Scanner(current)
+//  
+//  sc2 useDelimiter "\t"
+//  
+//  sc2 next
+//  
+//  source2 close
+//  
+//  str = ""
+//  
+//  counter = 0
+//  
+//  var counter2 = 0
+//  
+//  while (sc2 hasNext) {
+//    if (listIndex.contains(counter)) {
+//      println(counter+":"+counter2)
+//      str += counter2 + "\t" + (sc2 next) + "\n"
+//      counter2 += 1
+//    } else {
+//      (sc2 next)
+//    }
+//    counter += 1
+//  }
+//  
+//  println(str)
+  
+//  Util.write("data/bestmddswaphardScore.dat", str)
+//  
+//  str = "set style data histogram\nset style histogram cluster gap 1\nset style fill solid border -1\nset xtic rotate by -45\nplot \'../data/bestmddswaphardScore.dat\' using 2:xtic(1) title \'Score On Hard Prbl\'"
+// 
+//  Util.write("plot/bestmddswaphardScore.plt", str)
+}
+
 object MainPlotDeviationILS extends App {
 
   val source = scala.io.Source.fromFile("output/ils.log")
