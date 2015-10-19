@@ -96,6 +96,14 @@ object HillClimbing {
     }
     println()
   }
+  
+  def shuffleCursor(nbJobs : Int) : Unit = {
+    val r = new java.util.Random
+    val firstRandom = r.nextInt(nbJobs-1)
+    var secondRandom = r.nextInt(nbJobs-1)
+    while (firstRandom == secondRandom) secondRandom = r.nextInt(nbJobs-1)
+    cursor = (firstRandom, secondRandom)
+  }
 
   def run(currentSolution: Solution,
           gen: (Solution) => Solution,

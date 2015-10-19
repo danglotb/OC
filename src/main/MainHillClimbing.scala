@@ -17,20 +17,28 @@ object MainHillClimbing extends App {
   parseOptions
   run
 
-  def run() : Unit = {
+  def run(): Unit = {
+
+    var optimaCounter = 0
+
     val optimas = Util.readOptimas
-    Logger.open("output/besteddinsertdeviation.log")
-    HillClimbing.initEdd(pathname, 100, 125, false)
+    Logger.open("output/bestmddswapdeviation.log")
+    HillClimbing.initMdd(pathname, 100, 125, false)
     for (i <- 0 until 125) {
-      val score = HillClimbing.run(HillClimbing.genFirstSolution, HillClimbing.insertGen , HillClimbing.selectBest)
-      val deviation : Float = if (optimas(i) != 0) (100.0*(score.toFloat - optimas(i).toFloat)/optimas(i).toFloat).toFloat else (optimas(i)-score).toFloat
-      Logger.write(i+"\t"+score+"\t"+deviation+"\t"+optimas(i)+"\n")
-      print(i+"\t"+score+"\t"+deviation+"\t"+optimas(i)+"\n")
+      val score = HillClimbing.run(HillClimbing.genFirstSolution, HillClimbing.swapGen, HillClimbing.selectBest)
+      val deviation: Float = if (optimas(i) != 0) (100.0 * (score.toFloat - optimas(i).toFloat) / optimas(i).toFloat).toFloat else (optimas(i) - score).toFloat
+      Logger.write(i + "\t" + score + "\t" + deviation + "\t" + optimas(i) + "\n")
+      print(i + "\t" + score + "\t" + deviation + "\t" + optimas(i) + "\n")
+      if (optimas(i) == score) {
+        optimaCounter += 1
+      }
     }
+
+    Logger.write("optima found : " + optimaCounter + " / 125")
+
     Logger.close()
   }
-  
-  
+
   def runAll(): Unit = {
     Logger.open("output/log")
 
@@ -38,7 +46,7 @@ object MainHillClimbing extends App {
     for (i <- 0 until nbRuns) {
       println(i + " run")
       initFunc(pathname, 100, 125, false)
-      val time : Long = System.currentTimeMillis()
+      val time: Long = System.currentTimeMillis()
       HillClimbing.runAllInstances(genFunc, selectFunc)
       values += ((HillClimbing.scores, HillClimbing.times))
     }
@@ -127,78 +135,106 @@ object MainHillClimbing extends App {
 object MainVnd extends App {
 
   Logger.open("output/logvnd")
-  
-  HillClimbing.initRandom("input/wt100.txt", 100, 125)
-  var time : Long = System.currentTimeMillis
-  Logger.write("exchange_insert_swap_rnd\t"+ 
-      (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
-      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
- 
-  HillClimbing.initRandom("input/wt100.txt", 100, 125)
-  time = System.currentTimeMillis
-   Logger.write("exchange_swap_insert_rnd\t"+ 
-       (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
-      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
-      
-  HillClimbing.initMdd("input/wt100.txt", 100, 125)
-  time = System.currentTimeMillis
-  Logger.write("exchange_insert_swap_mdd\t"+ 
-      (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
-      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
- 
-  HillClimbing.initMdd("input/wt100.txt", 100, 125)
-  time = System.currentTimeMillis
-   Logger.write("exchange_swap_insert_mdd\t"+ 
-       (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
-      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
 
+  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  var time: Long = System.currentTimeMillis
+  Logger.write("exchange_insert_swap_rnd\t" +
+    (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen),
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score + "\t" + (System.currentTimeMillis - time) + "ms\n")
+
+  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+  Logger.write("exchange_swap_insert_rnd\t" +
+    (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen),
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score + "\t" + (System.currentTimeMillis - time) + "ms\n")
+
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+  Logger.write("exchange_insert_swap_mdd\t" +
+    (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen),
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score + "\t" + (System.currentTimeMillis - time) + "ms\n")
+
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  time = System.currentTimeMillis
+  Logger.write("exchange_swap_insert_mdd\t" +
+    (HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen),
+      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0)).score + "\t" + (System.currentTimeMillis - time) + "ms\n")
+      
+  
+  Logger.close
+
+}
+
+object MainVndAll extends App {
+  
+  var optimaCounter = 0
+
+  val optimas = Util.readOptimas
+ 
+  Logger.open("output/logVndAllBestInsertSwap.log")
+  
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  for (i <- 0 until 125) {
+    val time = System.currentTimeMillis
+      val score = HillClimbing.runVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen),
+      HillClimbing.genFirstSolution(), HillClimbing.selectBest, 0).score
+      val deviation: Float = if (optimas(i) != 0) (100.0 * (score.toFloat - optimas(i).toFloat) / optimas(i).toFloat).toFloat else (optimas(i) - score).toFloat
+      Logger.write(i + "\t" + score + "\t" + deviation + "\t" + optimas(i) + "\t"+ (System.currentTimeMillis-time) +"\n")
+      print(i + "\t" + score + "\t" + deviation + "\t" + optimas(i) + "\t" + (System.currentTimeMillis-time) + "\n")
+      if (optimas(i) == score) {
+        optimaCounter += 1
+      }
+    }
+  
+  Logger.write(optimaCounter+" / 125\n")
+  Logger.close
 }
 
 object MainPipedVnd extends App {
 
- Logger.open("output/logpipedvnd")
-  
-// println(1)
-// 
-//  HillClimbing.initRandom("input/wt100.txt", 100, 125)
-//  var time : Long = System.currentTimeMillis
-//  Logger.write("exchange_insert_swap_rnd\t"+ 
-//      (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
-//      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
-// 
-//  println(2)
-//      
-//  HillClimbing.initRandom("input/wt100.txt", 100, 125)
-//  time = System.currentTimeMillis
-//   Logger.write("exchange_swap_insert_rnd\t"+ 
-//       (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
-//      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
-//      
-//  println(3)
-//      
-//  HillClimbing.initMdd("input/wt100.txt", 100, 125)
-//  time = System.currentTimeMillis
-//  Logger.write("exchange_insert_swap_mdd\t"+ 
-//      (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
-//      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
-// 
-//  println(4)
-//      
-//  HillClimbing.initMdd("input/wt100.txt", 100, 125)
-//  time = System.currentTimeMillis
-//   Logger.write("exchange_swap_insert_mdd\t"+ 
-//       (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
-//      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
-//  
-//  println(5)
-      
+  Logger.open("output/logpipedvnd")
+
+  // println(1)
+  // 
+  //  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  //  var time : Long = System.currentTimeMillis
+  //  Logger.write("exchange_insert_swap_rnd\t"+ 
+  //      (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
+  //      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
+  // 
+  //  println(2)
+  //      
+  //  HillClimbing.initRandom("input/wt100.txt", 100, 125)
+  //  time = System.currentTimeMillis
+  //   Logger.write("exchange_swap_insert_rnd\t"+ 
+  //       (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
+  //      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
+  //      
+  //  println(3)
+  //      
+  //  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  //  time = System.currentTimeMillis
+  //  Logger.write("exchange_insert_swap_mdd\t"+ 
+  //      (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.insertGen, HillClimbing.swapGen), 
+  //      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
+  // 
+  //  println(4)
+  //      
+  //  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  //  time = System.currentTimeMillis
+  //   Logger.write("exchange_swap_insert_mdd\t"+ 
+  //       (HillClimbing.runPipedVnd(Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen ), 
+  //      HillClimbing.genFirstSolution(), HillClimbing.selectFirst, 0, false, 0)).score +"\t"+ (System.currentTimeMillis - time) + "ms\n")
+  //  
+  //  println(5)
+
   //Best Config find by score/time
-  HillClimbing.initMdd("input/wt100.txt", 100, 125)  
-   val time = System.currentTimeMillis()
-  Logger.write("insert_swap_best_mdd\t"+
-    (HillClimbing.runPipedVnd(Array(HillClimbing.insertGen, HillClimbing.swapGen), 
-      HillClimbing.genFirstSolution(), HillClimbing.selectBest, 0, false, 0)).score +"\t"+ (System.currentTimeMillis() - time) + "ms\n")
-      
+  HillClimbing.initMdd("input/wt100.txt", 100, 125)
+  val time = System.currentTimeMillis()
+  Logger.write("insert_swap_best_mdd\t" +
+    (HillClimbing.runPipedVnd(Array(HillClimbing.insertGen, HillClimbing.swapGen),
+      HillClimbing.genFirstSolution(), HillClimbing.selectBest, 0, false, 0)).score + "\t" + (System.currentTimeMillis() - time) + "ms\n")
+
   Logger.close
 
 }

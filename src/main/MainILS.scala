@@ -9,7 +9,7 @@ import solver.HillClimbing
  */
 object MainILS extends App {
 
-  Logger.open("output/ils.log")
+  Logger.open("output/ilsvnd10E9Better.log")
   
   val source = scala.io.Source.fromFile("input/wtbest100b.txt")
   
@@ -32,7 +32,11 @@ object MainILS extends App {
   //reach the optima
   for (i <- 0 until 125) {
     val time = System.currentTimeMillis()
-    val score = IterateLocalSearch.run(HillClimbing.genFirstSolution(), HillClimbing.selectBest, HillClimbing.insertGen, HillClimbing.exchangeGen, IterateLocalSearch.selectBestSolution, IterateLocalSearch.terminationCounter).score
+    val score = IterateLocalSearch.runVnd(HillClimbing.genFirstSolution, HillClimbing.runVnd, HillClimbing.selectBest, 0, 
+        Array(HillClimbing.exchangeGen, HillClimbing.swapGen, HillClimbing.insertGen), 
+        HillClimbing.swapGen, IterateLocalSearch.selectBetterSolution, IterateLocalSearch.terminationCounter).score
+//    val score = IterateLocalSearch.run(HillClimbing.genFirstSolution(), HillClimbing.selectBest, HillClimbing.insertGen, HillClimbing.exchangeGen, 
+//        IterateLocalSearch.selectBestSolution, IterateLocalSearch.terminationCounter).score
     val deviation : Float = if (optimas(i) != 0) (100.0*(score.toFloat - optimas(i).toFloat)/optimas(i).toFloat).toFloat else (optimas(i)-score).toFloat
     Logger.write(i+"\t"+(System.currentTimeMillis()-time)+"\t"+score+"\t"+optimas(i)+"\t"+deviation+"\n")
     print(i+"\t"+(System.currentTimeMillis()-time)+"\t"+score+"\t"+optimas(i)+"\t"+deviation+"\n")
@@ -40,6 +44,7 @@ object MainILS extends App {
   }
   
   println(countOpti)
+  Logger.write(countOpti+" / 125 \n")
   
   (source close)
   (Logger close)

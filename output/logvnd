@@ -1,0 +1,4 @@
+exchange_insert_swap_rnd	5990	1458ms
+exchange_swap_insert_rnd	5988	2973ms
+exchange_insert_swap_mdd	5990	1086ms
+exchange_swap_insert_mdd	5988	1339ms

@@ -7,7 +7,7 @@ import data.Solution
  */
 object IterateLocalSearch {
 
-  val nbRun = 10
+  val nbRun = 1000
 
   var count: Int = 0
 
@@ -28,7 +28,6 @@ object IterateLocalSearch {
     current
   }
 
-  //generate worst solution
   def runVnd(firstSol: Solution,
              localSearch: (Array[(Solution) => Solution], Solution, (((Solution) => Solution), Solution) => (Solution), Int) => Solution,
              localSelect: (Solution => Solution, Solution) => Solution,
@@ -37,6 +36,7 @@ object IterateLocalSearch {
              pertubGen: (Solution) => Solution,
              select: (Solution, Solution) => Solution,
              termination: () => Boolean): Solution = {
+    count = 0
     var current = localSearch(localGen, firstSol, localSelect, localCount)
     while (termination()) {
       val selected = localSearch(localGen, pertubation(pertubGen, current), localSelect, localCount)
@@ -49,6 +49,7 @@ object IterateLocalSearch {
   def pertubation(gen: (Solution) => Solution, current: Solution): Solution = {
     val r: scala.util.Random = scala.util.Random
     val c = (r.nextInt(10) + 3)
+    HillClimbing.shuffleCursor(current.instance().nbJobs())
     var iterateSol = gen(current)
     for (i <- 1 until c) { iterateSol = gen(iterateSol) }
     iterateSol
