@@ -29,7 +29,7 @@ object GenSolver {
     }
   }
 
-  def crossOver(p: (Solution, Solution)): ListBuffer[Solution] = {
+  def crossOver(p: (Solution, Solution)): List[Solution] = {
     val nbJobs = p._1.instance.nbJobs
     val k = nbJobs / 2
     val indexChosen = chooseIndex(k, Nil, nbJobs)
@@ -44,11 +44,10 @@ object GenSolver {
         child1 += p._2.solution()(i)
       }
     }
-    val result = new ListBuffer[Solution]
-    result += new Solution(p._1.instance, child1)
-    result += new Solution(p._1.instance, child2)
+//    val result = new ListBuffer[Solution]
+    val result : List[Solution] = new Solution(p._1.instance, child1) :: Nil
+    return (result :+ new Solution(p._1.instance, child2))
 
-    result
   }
 
   def mutation(p: Solution): Solution = {
@@ -103,11 +102,15 @@ object GenSolver {
       pc.minBy { x => x score }
     else {
 
+      
+      val children2 : List[Solution] = Nil
+      
       val children = new ListBuffer[Solution]
 
       for (i <- 0 until pc.length / 2) {
         val parents = randomTuple(pc length)
-        children ++= crossOver((pc(parents._1), pc(parents._2)))
+//        children ++= crossOver((pc(parents._1), pc(parents._2)))
+        children2 ::: crossOver((pc(parents._1), pc(parents._2)))
       }
 
       val mutant = new ListBuffer[Solution]
