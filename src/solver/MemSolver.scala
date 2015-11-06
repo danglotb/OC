@@ -41,8 +41,9 @@ object MemSolver {
     list
   }
 
-  def run(nbGen: Int, nbMutation: Int, pc: ListBuffer[Solution], nbRun: Int, cRate: Float, cMutation: Float,
-          localSearch: (Solution => Solution), begin : Int, end : Int): Solution = {
+  def run(nbGen: Int, pc: ListBuffer[Solution], nbRun: Int, cRate: Double, cMutation: Double,
+      begin : Int, end : Int, 
+      localSearch : (Solution => Solution)) : Solution = {
     if (nbRun > nbGen)
       pc.minBy { x => x score }
     else {
@@ -50,13 +51,13 @@ object MemSolver {
       val r = new java.util.Random
       for (i <- 0 until (cRate * pc.length).toInt) {
         val parents = GenSolver.randomTuple(pc length)
-        var newChild = crossOver((pc(parents._1), pc(parents._2)))
+        var newChild = crossOver((pc(parents._1), pc(parents._2)), begin, end)
         if (r.nextInt() < cMutation)
           newChild = mutation(newChild)
         localSearch(newChild)
         children += newChild
       }
-      run(nbGen, nbMutation, getBest2(pc, children), nbRun + 1, cRate, cMutation, localSearch)
+      run(nbGen, getBest2(pc, children), nbRun + 1, cRate, cMutation, begin, end, localSearch)
     }
   }
 

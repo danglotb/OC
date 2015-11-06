@@ -115,6 +115,21 @@ object HillClimbing {
     }
     run(selected, gen, select)
   }
+  
+  def runForMA(first : Solution) : Solution = {
+    runForSolution(first,HillClimbing.insertGen,HillClimbing.selectBest)
+  }
+  
+  def runForSolution(currentSolution: Solution,
+          gen: (Solution) => Solution,
+          select: (((Solution) => Solution), Solution) => (Solution)) : Solution = {
+    start = cursor
+    val selected = select(gen, currentSolution)
+    if ( (selected == currentSolution)||(selected.score == currentSolution.score) ) {
+      return selected
+    }
+    runForSolution(selected, gen, select)
+  }
 
   //Generate neighbors
 
