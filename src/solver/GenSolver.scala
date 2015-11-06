@@ -7,7 +7,7 @@ import data.Solution
  * @author danglot
  */
 object GenSolver {
- 
+
   def randomTuple(max: Int): (Int, Int) = {
     val r = new java.util.Random
     val p1 = r.nextInt(max)
@@ -16,22 +16,26 @@ object GenSolver {
     (p1, p2)
   }
 
+  def chooseIndex(k: Int, l: List[Int], nbJobs: Int): List[Int] = {
+    if (l.length >= k)
+      l
+    else {
+      val r = new java.util.Random
+      val index = r.nextInt(nbJobs)
+      if (!l.contains(index))
+        chooseIndex(k, l :+ index, nbJobs)
+      else
+        chooseIndex(k, l, nbJobs)
+    }
+  }
+
   def crossOver(p: (Solution, Solution)): ListBuffer[Solution] = {
     val nbJobs = p._1.instance.nbJobs
     val k = nbJobs / 2
-    val indexChosen = new ListBuffer[Int]
-    val r = new java.util.Random
-    var i = 0
-    while(i < k) {
-      val index = r.nextInt(nbJobs)
-      if (!indexChosen.contains(index)) {
-        i += 1
-        indexChosen += index
-      }
-    }
+    val indexChosen = chooseIndex(k, Nil, nbJobs)
     val child1 = new ListBuffer[Int]
     val child2 = new ListBuffer[Int]
-    for(i <- 0 until nbJobs) {
+    for (i <- 0 until nbJobs) {
       if (indexChosen.contains(i)) {
         child1 += p._1.solution()(i)
         child2 += p._2.solution()(i)
@@ -41,9 +45,9 @@ object GenSolver {
       }
     }
     val result = new ListBuffer[Solution]
-    result += new Solution(p._1.instance,child1)
-    result += new Solution(p._1.instance,child2)
-    
+    result += new Solution(p._1.instance, child1)
+    result += new Solution(p._1.instance, child2)
+
     result
   }
 
@@ -56,8 +60,8 @@ object GenSolver {
     val list = new ListBuffer[Solution]
     val end = l1.length
     while (list.length < end) {
-      if ( !l1.isEmpty || !l2.isEmpty && l1.minBy { x => x score }.score > l2.minBy { x => x score }.score) {
-        if ( l3.isEmpty || l1.minBy { x => x score }.score > l3.minBy { x => x score }.score) {
+      if (!l1.isEmpty || !l2.isEmpty && l1.minBy { x => x score }.score > l2.minBy { x => x score }.score) {
+        if (l3.isEmpty || l1.minBy { x => x score }.score > l3.minBy { x => x score }.score) {
           list += l1.minBy { x => x score }
           l1 -= l1.minBy { x => x score }
         } else {
@@ -75,18 +79,37 @@ object GenSolver {
     list
   }
 
-  def run(nbGen : Int, nbMutation : Int , pc: ListBuffer[Solution], nbRun: Int): Solution = {
+  def getBestFr3(lr: List[Solution], l1: List[Solution], l2: List[Solution], l3: List[Solution], sizeOfPop: Int): List[Solution] = {
+    if (lr.length >= sizeOfPop)
+      lr
+    else {
+      if (!l1.isEmpty || !l2.isEmpty && l1.minBy { x => x score }.score > l2.minBy { x => x score }.score) {
+        if (l3.isEmpty || l1.minBy { x => x score }.score > l3.minBy { x => x score }.score) {
+          getBestFr3(lr :+ l1.minBy { x => x score }, l1.filter { x => x == l1.minBy { x => x score } }, l2, l3, sizeOfPop)
+        } else {
+          getBestFr3(lr :+ l3.minBy { x => x score }, l1, l2, l3.filter { x => x == l1.minBy { x => x score } }, sizeOfPop)
+        }
+      } else if (l3.isEmpty || l2.minBy { x => x score }.score > l3.minBy { x => x score }.score) {
+        getBestFr3(lr :+ l2.minBy { x => x score }, l1, l2.filter { x => x == l1.minBy { x => x score } }, l3, sizeOfPop)
+      } else {
+        getBestFr3(lr :+ l3.minBy { x => x score }, l1, l2, l3.filter { x => x == l1.minBy { x => x score } }, sizeOfPop)
+      }
+    }
+  }
+
+  def run(nbGen: Int, nbMutation: Int, pc: ListBuffer[Solution], nbRun: Int): Solution = {
+    println("NbRun " + nbRun)
     if (nbRun > nbGen)
       pc.minBy { x => x score }
     else {
-      
+
       val children = new ListBuffer[Solution]
 
       for (i <- 0 until pc.length / 2) {
         val parents = randomTuple(pc length)
         children ++= crossOver((pc(parents._1), pc(parents._2)))
       }
-      
+
       val mutant = new ListBuffer[Solution]
 
       for (i <- 0 until nbMutation) {

@@ -8,13 +8,14 @@ object MemSolver {
 
   def crossOver(p: (Solution, Solution), begin: Int, end: Int): Solution = {
     val solutionChild = new ListBuffer[Int]()
+    val solutionChild1 = new ListBuffer[Int]()
+    
+    for (i <- begin until end)
+      solutionChild1 += p._2.solution()(i)
     
     for (i <- 0 until begin)
       solutionChild += p._1.solution()(i)
-      
-    for (i <- begin until end)
-      solutionChild += p._2.solution()(i)
-      
+
     for (i <- end until p._1.instance().nbJobs())
       solutionChild += p._1.solution()(i)
       

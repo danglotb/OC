@@ -8,13 +8,14 @@ import data.InstanceReader
 
 import scala.collection.mutable.ListBuffer
 
+
 object MainMA extends App {
   
   val list = new scala.collection.mutable.ListBuffer[Solution]
   val N = 100
   val mRate = 0.40
   val cRate = 0.40
-  val nbRun = 100
+  val nbRun = 10
   
   data.Logger.open("output/GA"+N+"_"+nbRun+"_"+mRate+"_"+cRate+".log")
 
@@ -56,7 +57,7 @@ object MainGen extends App {
   val list = new scala.collection.mutable.ListBuffer[Solution]
   val N = 100
   val nbMutation = 40
-  val nbRun = 100
+  val nbRun = 10
   
   data.Logger.open("output/GA"+N+"_"+nbRun+"_"+nbMutation+"_"+".log")
 
@@ -82,7 +83,7 @@ object MainGen extends App {
     list += mddsol.solution
 
     val time = System.currentTimeMillis()
-    val sol = GenSolver.run(nbMutation, nbRun, list, 0)
+    val sol = GenSolver.run(nbRun, nbMutation, list, 0)
     data.Logger.write(i+"\t"+sol.score+"\t"+(System.currentTimeMillis() - time))    
   }
   
