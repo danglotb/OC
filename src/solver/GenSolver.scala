@@ -8,10 +8,7 @@ import data.Solution
  */
 object GenSolver {
 
-  val nbGen = 100
-
-  val nbMutation = 3
-
+ 
   def randomTuple(max: Int): (Int, Int) = {
     val r = new java.util.Random
     val p1 = r.nextInt(max)
@@ -59,29 +56,29 @@ object GenSolver {
   def getBest(l1: ListBuffer[Solution], l2: ListBuffer[Solution], l3: ListBuffer[Solution]): ListBuffer[Solution] = {
     val list = new ListBuffer[Solution]
     val end = l1.length
-    while (list.length != end) {
-      if (l1.maxBy { x => x score }.score > l2.maxBy { x => x score }.score) {
-        if (l1.maxBy { x => x score }.score > l3.maxBy { x => x score }.score) {
-          list += l1.maxBy { x => x score }
-          l1 -= l1.maxBy { x => x score }
+    while (list.length < end) {
+      if ( !l1.isEmpty || !l2.isEmpty && l1.minBy { x => x score }.score > l2.minBy { x => x score }.score) {
+        if ( l3.isEmpty || l1.minBy { x => x score }.score > l3.minBy { x => x score }.score) {
+          list += l1.minBy { x => x score }
+          l1 -= l1.minBy { x => x score }
         } else {
-          list += l3.maxBy { x => x score }
-          l3 -= l3.maxBy { x => x score }
+          list += l3.minBy { x => x score }
+          l3 -= l3.minBy { x => x score }
         }
-      } else if (l2.maxBy { x => x score }.score > l3.maxBy { x => x score }.score) {
-        list += l2.maxBy { x => x score }
-        l2 -= l2.maxBy { x => x score }
+      } else if (l3.isEmpty || l2.minBy { x => x score }.score > l3.minBy { x => x score }.score) {
+        list += l2.minBy { x => x score }
+        l2 -= l2.minBy { x => x score }
       } else {
-        list += l3.maxBy { x => x score }
-        l3 -= l3.maxBy { x => x score }
+        list += l3.minBy { x => x score }
+        l3 -= l3.minBy { x => x score }
       }
     }
     list
   }
 
-  def run(pc: ListBuffer[Solution], nbRun: Int): Solution = {
+  def run(nbGen : Int, nbMutation : Int , pc: ListBuffer[Solution], nbRun: Int): Solution = {
     if (nbRun > nbGen)
-      pc.maxBy { x => x score }
+      pc.minBy { x => x score }
     else {
       
       val children = new ListBuffer[Solution]
@@ -97,7 +94,7 @@ object GenSolver {
         val r = new java.util.Random
         mutant += mutation(pc(r.nextInt(pc.length)))
       }
-      run(getBest(pc, mutant, children), nbRun + 1)
+      run(nbGen, nbMutation, getBest(pc, mutant, children), nbRun + 1)
     }
   }
 
