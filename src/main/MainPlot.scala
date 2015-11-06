@@ -2,6 +2,13 @@ package main
 
 import data.Util
 
+object MainPrintIlsVnd extends App {
+  
+  
+  
+  
+}
+
 object MainPrintHarderPrbl extends App {
   val source = scala.io.Source.fromFile("output/log")
   

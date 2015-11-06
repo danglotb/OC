@@ -7,7 +7,6 @@ import data.Solution
  * @author danglot
  */
 object GenSolver {
-
  
   def randomTuple(max: Int): (Int, Int) = {
     val r = new java.util.Random
