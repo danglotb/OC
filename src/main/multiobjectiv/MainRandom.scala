@@ -20,15 +20,19 @@ object MainRandom extends App {
   val solutions = build500Random(Nil, instance)
 
   //build data
-  Logger.open("data/random500mTSP.dat")
+  var str = ""
   Filter2o.filter(solutions).foreach { x =>
-    Logger.write(x._1 + "\t" + x._2 + "\n")
+    str += x._1 + "\t" + x._2 + "\n"
   }
-  Logger.close()
+  data.Util.write("data/domRandom500mTSP.dat", str)
+  
+  str = ""
+  solutions.foreach { x =>
+    str += x._1 + "\t" + x._2 + "\n"
+  }
+  data.Util.write("data/random500mTSP.dat", str)
 
   //build plt file
-  Logger.open("plot/random500mTSP.plt")
-  Logger.write("plot \'../data/random500mTSP.dat\'")
-  Logger.close()
-
+  str = "plot \"data/random500mTSP.dat\" title \'non-dominate \',  \"data/domRandom500mTSP.dat\"title \'dominate\'"
+  data.Util.write("plot/random500mTSP.plt", str)
 }
