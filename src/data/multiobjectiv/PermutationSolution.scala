@@ -18,4 +18,12 @@ class PermutationSolution(n : Int, instance : InstanceTSP) {
       computeScore(i+1,currentScore)
     }
   }
+  
+  override def toString() : String = {
+    var string = ""
+    solution.foreach { f =>
+      string += f + "\t"
+    }
+    string
+  }
 }
