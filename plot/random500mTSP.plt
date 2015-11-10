@@ -1,0 +1,1 @@
+plot "data/random500mTSP.dat" title 'non-dominate ',  "data/domRandom500mTSP.dat"title 'dominate'

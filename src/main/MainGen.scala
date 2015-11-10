@@ -15,9 +15,9 @@ object MainMA extends App {
   val N = 100
   val mRate = 0.40
   val cRate = 0.40
-  val nbRun = 10
+  val nbRun = 100
   
-  data.Logger.open("output/GA"+N+"_"+nbRun+"_"+mRate+"_"+cRate+".log")
+  data.Logger.open("output/MA"+N+"_"+nbRun+"_"+mRate+"_"+cRate+".log")
 
   val solutionIndex: ListBuffer[Int] = new ListBuffer[Int]()
   for (i <- 0 until 100) solutionIndex += i
@@ -42,7 +42,7 @@ object MainMA extends App {
 
     val time = System.currentTimeMillis()
     val sol = MemSolver.run(nbRun, list, 0, cRate, mRate, 25, 75, HillClimbing.runForMA)
-    data.Logger.write(i+"\t"+sol.score+"\t"+(System.currentTimeMillis() - time))    
+    data.Logger.write(i+"\t"+sol.score+"\t"+(System.currentTimeMillis() - time)+"\n")    
   }
   
   data.Logger.close
@@ -55,9 +55,9 @@ object MainMA extends App {
 object MainGen extends App {
 
   val list = new scala.collection.mutable.ListBuffer[Solution]
-  val N = 100
-  val nbMutation = 40
-  val nbRun = 10
+  val N = 200
+  val nbMutation = 80
+  val nbRun = 100
   
   data.Logger.open("output/GA"+N+"_"+nbRun+"_"+nbMutation+"_"+".log")
 
@@ -84,7 +84,7 @@ object MainGen extends App {
 
     val time = System.currentTimeMillis()
     val sol = GenSolver.run(nbRun, nbMutation, list, 0)
-    data.Logger.write(i+"\t"+sol.score+"\t"+(System.currentTimeMillis() - time))    
+    data.Logger.write(i+"\t"+sol.score+"\t"+(System.currentTimeMillis() - time)+"\n")    
   }
   
   data.Logger.close

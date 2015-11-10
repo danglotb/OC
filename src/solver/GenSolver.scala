@@ -98,7 +98,7 @@ object GenSolver {
 
   def run(nbGen: Int, nbMutation: Int, pc: ListBuffer[Solution], nbRun: Int): Solution = {
     println("NbRun " + nbRun)
-    if (nbRun > nbGen)
+    if (nbRun >= nbGen)
       pc.minBy { x => x score }
     else {
 
