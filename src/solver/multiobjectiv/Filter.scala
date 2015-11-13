@@ -17,6 +17,7 @@ object Filter2o {
   }
 
   private def filterMin(solution: List[(Int, Int)], dominator : List[(Int, Int)], i: Int): List[(Int, Int)] = {
+//    println("i="+i+"\tsize="+solution.length)
     if (i >= solution.length)
       dominator
     else {
