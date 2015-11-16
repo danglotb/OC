@@ -9,26 +9,25 @@ import scala.collection.mutable.ListBuffer
  */
 object Filter2o {
 
-  def filter(solution: List[(Int, Int)], max: Boolean = false): List[(Int, Int)] = {
+  def filter(solution: List[(Int, Int)], max: Boolean = false): (List[(Int, Int)], List[(Int, Int)]) = {
     if (max)
       filterMax(solution, solution, 0)
     else
       filterMin(solution, solution, 0)
   }
 
-  private def filterMin(solution: List[(Int, Int)], dominator : List[(Int, Int)], i: Int): List[(Int, Int)] = {
-//    println("i="+i+"\tsize="+solution.length)
+   private def filterMin(solution: List[(Int, Int)], dominator : List[(Int, Int)], i: Int): (List[(Int, Int)], List[(Int, Int)]) = {
     if (i >= solution.length)
-      dominator
+      (dominator, solution.diff(dominator))
     else {
       val dominated = solution.filter {p => p != solution(i) && compare2Tuple(p,solution(i))}
       filterMin(solution, dominator.diff(dominated), i+1)
     }
   }
   
-  private def filterMax(solution: List[(Int, Int)],dominator : List[(Int, Int)], i : Int): List[(Int, Int)] = {
+  private def filterMax(solution: List[(Int, Int)],dominator : List[(Int, Int)], i : Int): (List[(Int, Int)], List[(Int, Int)]) = {
     if (i >= solution.length)
-      dominator
+        (dominator, solution.diff(dominator))
     else {
       val dominated = solution.filter {p => p != solution(i) && compare2Tuple(solution(i),p)}
       filterMax(solution, dominator.diff(dominated), i+1)
