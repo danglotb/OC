@@ -31,9 +31,9 @@ object MainOnLineRandom extends App {
 
   val time = System.currentTimeMillis()
   
-  val solutions = Build500Random.build500RandomOnLine(Nil, Nil,instance,1000)
+  val solutions = Build500Random.build500RandomOnLine(Nil, Nil,instance,50000)
 
-  println(System.currentTimeMillis() - time+ " ms")
+  println(System.currentTimeMillis() - time+ " ms with " + Filter2o.cpt)
   
   //build data
   var str = ""
@@ -59,11 +59,11 @@ object MainOffLineRandom extends App {
 
   val time = System.currentTimeMillis()
   
-  val solutions = Build500Random.build500Random(Nil, instance, 1000)
+  val solutions = Build500Random.build500Random(Nil, instance, 50000)
 
   val solution2Tuple =  Filter2o.filter(solutions)
   
-  println(System.currentTimeMillis() - time + " ms")
+  println(System.currentTimeMillis() - time + " ms with " + Filter2o.cpt)
   
   //build data
   var str = ""

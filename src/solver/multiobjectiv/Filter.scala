@@ -8,6 +8,16 @@ import scala.collection.mutable.ListBuffer
  * @author danglot
  */
 object Filter2o {
+  
+  var cpt = 0
+  
+  def filterFromSolution(solution : List[PermutationSolution],  max: Boolean = false) : Unit = {
+    val points = buildListPoint(solution,Nil,0)
+    if (max)
+      filterMax(points, points, 0)
+    else
+      filterMin(points, points, 0)
+  }
 
   def filter(solution: List[(Int, Int)], max: Boolean = false): (List[(Int, Int)], List[(Int, Int)]) = {
     if (max)
@@ -33,7 +43,16 @@ object Filter2o {
       filterMax(solution, dominator.diff(dominated), i+1)
     }
   }
+    
+  private def buildListPoint(solution : List[PermutationSolution], points : List[(Int,Int)], i : Int) : List[(Int, Int)] = {
+    if (i == solution.length)
+      points
+    else {
+      val newScore = solution(i).score()
+      buildListPoint(solution, points :+ (newScore(0), newScore(1)), i+1)
+    }
+  }
 
-  private def compare2Tuple(t1: (Int, Int), t2: (Int, Int)) = t1._1 >= t2._1 && t1._2 >= t2._2
+  private def compare2Tuple(t1: (Int, Int), t2: (Int, Int)) = {cpt += 1 ; t1._1 >= t2._1 && t1._2 >= t2._2}
 
 }

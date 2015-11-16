@@ -55,9 +55,9 @@ object MainMA extends App {
 object MainGen extends App {
 
   val list = new scala.collection.mutable.ListBuffer[Solution]
-  val N = 200
-  val nbMutation = 80
-  val nbRun = 100
+  val N = 100
+  val nbMutation = 40
+  val nbRun = 200
   
   data.Logger.open("output/GA"+N+"_"+nbRun+"_"+nbMutation+"_"+".log")
 
