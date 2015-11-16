@@ -11,6 +11,19 @@ object Filter2o {
   
   var cpt = 0
   
+  def filterMinSol(dominator : List[PermutationSolution], solution : List[PermutationSolution], i : Int) :  (List[PermutationSolution], List[PermutationSolution]) = {
+    if (i >= solution.length)
+      (dominator, solution.diff(dominator))
+    else {
+      val scoreCurrentSolution = solution(i).score
+      val dominated = solution.filter { p => 
+          val score = p.score
+          p != solution(i) && compare2Tuple( (score(0),score(1)) , (scoreCurrentSolution(0),scoreCurrentSolution(1)))
+      }
+      filterMinSol(solution, dominator.diff(dominated), i+1)
+    }
+  }
+  
   def filterFromSolution(solution : List[PermutationSolution],  max: Boolean = false) : Unit = {
     val points = buildListPoint(solution,Nil,0)
     if (max)
